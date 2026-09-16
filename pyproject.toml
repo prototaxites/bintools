@@ -1,0 +1,21 @@
+[project]
+name = "bintools"
+version = "0.1.0"
+description = "A toolkit for collating and manipulating metagenome bins."
+readme = "README.md"
+authors = [
+    { name = "Jim Downie", email = "jd42@sanger.ac.uk" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "click>=8.5.0",
+    "pydantic>=2.13.5",
+    "pyfastx>=2.3.1",
+]
+
+[project.scripts]
+bintools = "bintools.cli:cli"
+
+[build-system]
+requires = ["uv_build>=0.12.14,<0.13.0"]
+build-backend = "uv_build"
