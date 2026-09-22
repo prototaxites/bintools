@@ -3,10 +3,10 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from bintools.dataclasses.binset import BinSet
-from bintools.enums import Assembler
-from bintools.import_data.assembly_parser import parse_assembly_fasta
-from bintools.import_data.bin_parser import parse_bins
+from bin_tools.dataclasses.binset import BinSet
+from bin_tools.enums import Assembler
+from bin_tools.import_data.assembly import parse_assembly_fasta
+from bin_tools.import_data.binset import parse_bins
 
 TEST_DATA_DIR = Path(__file__).parent.parent / "data"
 

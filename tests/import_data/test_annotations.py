@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from bintools.dataclasses.annotation import Frame, Strand
-from bintools.enums import Assembler
-from bintools.import_data.annotate_contigs import annotate_contigs, read_gff
-from bintools.import_data.assembly_parser import parse_assembly_fasta
+from bin_tools.dataclasses.annotation import Frame, Strand
+from bin_tools.enums import Assembler
+from bin_tools.import_data.annotation import annotate_contigs, read_gff
+from bin_tools.import_data.assembly import parse_assembly_fasta
 
 TEST_DATA_DIR = Path(__file__).parent.parent / "data"
 
