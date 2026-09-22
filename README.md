@@ -17,7 +17,7 @@ Metagenomic binning produces scattered outputs: bin FASTA files, quality assessm
 ## Installation
 
 ```bash
-pip install bin-tools
+pip install bin-tools ## not on pip yet!
 ```
 
 ## Quick Start
