@@ -146,6 +146,14 @@ Combine multiple binfiles:
 bintools merge set1.bins set2.bins set3.bins -o merged.bins
 ```
 
+### trim
+
+Remove unused contigs from a binfile:
+
+```bash
+bintools trim input.bins -o trimmed.bins
+```
+
 ## File Format
 
 A `.bins` file is a zstd-compressed (or uncompressed) JSON document containing:
