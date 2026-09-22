@@ -12,3 +12,12 @@ def get_basename(file: Path) -> str:
         return file.name.rsplit(".", 2)[0]
     else:
         return file.name.rsplit(".", 1)[0]
+
+
+def find_binfiles(directory: Path) -> list[Path]:
+    return [
+        p
+        for p in directory.glob("*")
+        if get_extension(p)
+        in {".fa", ".fna", ".fasta", ".fa.gz", ".fna.gz", ".fasta.gz"}
+    ]

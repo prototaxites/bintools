@@ -1,0 +1,6 @@
+>contig1 circular=yes
+ACGTACGTACGT
+>contig2 circular=no
+TGCATGCATGCA
+>contig3 circular=no
+ACTGTCCCTGAC

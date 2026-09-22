@@ -1,0 +1,29 @@
+
+##gff-version 3
+##sequence-region contig1 1 12
+##sequence-region contig2 1 14
+contig1	.	tRNA	1	3	.	+	.	ID=tRNA_1;product=tRNA-Ala
+contig1	.	tRNA	2	4	.	+	.	ID=tRNA_2;product=tRNA-Arg
+contig1	.	tRNA	3	5	.	+	.	ID=tRNA_3;product=tRNA-Asn
+contig1	.	tRNA	4	6	.	+	.	ID=tRNA_4;product=tRNA-Asp
+contig1	.	tRNA	5	7	.	+	.	ID=tRNA_5;product=tRNA-Cys
+contig1	.	tRNA	6	8	.	+	.	ID=tRNA_6;product=tRNA-Gln
+contig1	.	tRNA	7	9	.	+	.	ID=tRNA_7;product=tRNA-Glu
+contig1	.	tRNA	8	10	.	+	.	ID=tRNA_8;product=tRNA-Gly
+contig1	.	tRNA	1	3	.	-	.	ID=tRNA_9;product=tRNA-His
+contig1	.	tRNA	2	4	.	-	.	ID=tRNA_10;product=tRNA-Ile
+contig1	.	tRNA	3	5	.	-	.	ID=tRNA_11;product=tRNA-Leu
+contig1	.	tRNA	4	6	.	-	.	ID=tRNA_12;product=tRNA-Lys
+contig1	.	tRNA	5	7	.	-	.	ID=tRNA_13;product=tRNA-Met
+contig1	.	tRNA	6	8	.	-	.	ID=tRNA_14;product=tRNA-Phe
+contig1	.	tRNA	7	9	.	-	.	ID=tRNA_15;product=tRNA-Pro
+contig1	.	tRNA	8	10	.	-	.	ID=tRNA_16;product=tRNA-Ser
+contig1	.	tRNA	9	11	.	-	.	ID=tRNA_17;product=tRNA-Thr
+contig1	.	tRNA	10	12	.	-	.	ID=tRNA_18;product=tRNA-Trp
+contig1	.	rRNA	1	2	.	+	.	ID=rRNA_5S;product=5S ribosomal RNA
+contig1	.	rRNA	3	5	.	+	.	ID=rRNA_16S;product=16S ribosomal RNA
+contig1	.	rRNA	6	12	.	+	.	ID=rRNA_23S;product=23S ribosomal RNA
+contig2	.	tRNA	1	3	.	+	.	ID=tRNA_19;product=tRNA-Val
+contig2	.	tRNA	5	7	.	+	.	ID=tRNA_20;product=tRNA-Trp
+contig2	.	tRNA	10	12	.	-	.	ID=tRNA_21;product=tRNA-Sec
+contig2	.	rRNA	2	6	.	+	.	ID=rRNA_16S_contig2;product=16S ribosomal RNA
