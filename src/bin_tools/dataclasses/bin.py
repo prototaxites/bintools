@@ -76,8 +76,8 @@ class BinStatistics(BaseModel):
 
 
 class BinTaxonomy(BaseModel):
-    source: str = Field(..., description="Source of the taxonomy classification")
-    classification: Annotated[
+    tax_source: str = Field(..., description="Source of the taxonomy classification")
+    tax_classification: Annotated[
         str,
         StringConstraints(
             pattern=r"^[dk]__.*;p__.*;c__.*;o__.*;f__.*;g__.*;s__.*$|^unknown$"
@@ -147,7 +147,7 @@ class BinTaxonomy(BaseModel):
             A dictionary mapping taxonomic parts to their values.
         """
         parts = {}
-        for part in self.classification.split(";"):
+        for part in self.tax_classification.split(";"):
             if "__" in part:
                 key, val = part.split("__", 1)
                 parts[key.strip()] = val.strip() if val.strip() else None

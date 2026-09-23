@@ -199,14 +199,12 @@ def parse_rename_template(template: str) -> Callable[[Bin], str]:
         for placeholder in placeholders:
             try:
                 value = getattr(context, placeholder)
-                # Convert value to string, replacing None or empty values with "unknown"
-                str_value = str(value) if value is not None else "unknown"
+                # Convert value to string, replacing None or empty values with "NA"
+                str_value = str(value) if value is not None else "NA"
                 result = result.replace(f"{{{placeholder}}}", str_value)
             except AttributeError:
-                raise ValueError(
-                    f"Invalid field in rename template: '{placeholder}'. "
-                    f"Field not found in bin properties, statistics, or taxonomy."
-                )
+                # Return "NA" if field doesn't exist
+                result = result.replace(f"{{{placeholder}}}", "NA")
 
         return result
 

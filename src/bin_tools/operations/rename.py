@@ -1,5 +1,7 @@
 """Bin renaming operations."""
 
+import re
+
 from loguru import logger
 
 from bin_tools.dataclasses.bin import Bin
@@ -39,7 +41,6 @@ def rename_bins(bins: list[Bin], template: str) -> list[Bin]:
 
     for bin in bins:
         new_name = rename_func(bin)
-        logger.info(f"Renaming bin {bin.id} to {new_name}")
 
         if new_name not in name_counts:
             name_counts[new_name] = 1
@@ -47,6 +48,8 @@ def rename_bins(bins: list[Bin], template: str) -> list[Bin]:
             name_counts[new_name] += 1
 
         new_name = f"{new_name}_{name_counts[new_name]}"
+        new_name = re.sub(r"\s+", "_", new_name)
+        logger.info(f"Renaming bin {bin.id} to {new_name}")
 
         renamed_bin = bin.model_copy(update={"id": new_name})
         renamed_bins.append(renamed_bin)

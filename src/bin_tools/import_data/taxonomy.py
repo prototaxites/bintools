@@ -22,8 +22,8 @@ class TaxonomyReader:
             for result in reader:
                 bin_name = get_basename(result[bin_name_column])
                 out_taxonomy[bin_name] = BinTaxonomy(
-                    source=taxonomy_source,
-                    classification=result[classification_column],
+                    tax_source=taxonomy_source,
+                    tax_classification=result[classification_column],
                 )
         return out_taxonomy
 
