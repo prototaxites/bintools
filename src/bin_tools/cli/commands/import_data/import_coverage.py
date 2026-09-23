@@ -6,7 +6,6 @@ from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
 from bin_tools.enums import CoverageTool
-from bin_tools.import_data.coverage import add_coverage
 
 
 @click.command("coverage")
@@ -20,7 +19,7 @@ from bin_tools.import_data.coverage import add_coverage
 @click.option(
     "--tool",
     type=click.Choice(CoverageTool),
-    help="Tool used to estimate coverage.",
+    help="Tool used to estimate coverage",
     required=False,
 )
 @click.option("--output", "-o", type=click.File("wb"), default="-", required=False)
@@ -28,7 +27,7 @@ from bin_tools.import_data.coverage import add_coverage
 @click.argument(
     "coverage",
     type=click.Path(exists=True, dir_okay=False, file_okay=True),
-    help="The GFF file to add the annotations from.",
+    help="Coverage file with contig-level coverage information",
     required=True,
 )
 def import_coverage(
@@ -42,11 +41,22 @@ def import_coverage(
 
     BINFILE: a BINS file to add the bins to.
     """
-    binset = BinSet.read_binfile(binfile)
+    try:
+        logger.info("Reading binfile...")
+        binset = BinSet.read_binfile(binfile)
 
-    logger.info("Adding coverage to contigs.")
-    annotated_contigs = add_coverage(binset.contigs, Path(coverage), tool)
-    logger.info(f"Annotated {len(annotated_contigs)} contigs")
+        logger.info(f"Adding coverage data from {Path(coverage).name}...")
+        out_binset = binset.add_contig_coverage(Path(coverage), tool)
 
-    binset.contigs = annotated_contigs
-    binset.write_binfile(output, compress=compress)
+        logger.info("Updating statistics...")
+        out_binset = out_binset.update_statistics()
+
+        logger.info("Writing binfile...")
+        out_binset.write_binfile(output, compress=compress)
+        logger.info("Coverage import completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

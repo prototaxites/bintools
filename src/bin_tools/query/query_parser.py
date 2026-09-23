@@ -170,3 +170,44 @@ def get_available_fields() -> dict[str, str]:
                 fields[field_name] = field_info.description
 
     return fields
+
+
+def parse_rename_template(template: str) -> Callable[[Bin], str]:
+    """
+    Parse a rename template string and return a function that generates bin names.
+
+    Allows injecting field values into the template using the format `{field_name}`.
+    Field names are resolved from bin properties, statistics, and taxonomy.
+
+    Args:
+        template: A template string with field placeholders like "bin_{taxon_name}"
+
+    Returns:
+        A callable that takes a Bin and returns the generated name
+
+    Raises:
+        ValueError: If the template contains invalid field references
+    """
+    # Find all field placeholders in the template
+    placeholder_pattern = r"\{([a-zA-Z_][a-zA-Z0-9_]*)\}"
+    placeholders = re.findall(placeholder_pattern, template)
+
+    def rename_func(bin: Bin) -> str:
+        context = FilterContext(bin=bin)
+        result = template
+
+        for placeholder in placeholders:
+            try:
+                value = getattr(context, placeholder)
+                # Convert value to string, replacing None or empty values with "unknown"
+                str_value = str(value) if value is not None else "unknown"
+                result = result.replace(f"{{{placeholder}}}", str_value)
+            except AttributeError:
+                raise ValueError(
+                    f"Invalid field in rename template: '{placeholder}'. "
+                    f"Field not found in bin properties, statistics, or taxonomy."
+                )
+
+        return result
+
+    return rename_func

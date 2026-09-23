@@ -6,7 +6,6 @@ from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
 from bin_tools.enums import QualityTool
-from bin_tools.import_data.quality import add_quality
 
 
 @click.command("quality")
@@ -43,11 +42,26 @@ def import_quality(
 
     BINFILE: a BINS file to add the bins to
     """
-    binset = BinSet.read_binfile(binfile)
-    if binset.bins is None:
-        logger.error("No bins found in the BINS file.")
-        raise click.ClickException("No bins found in the BINS file.")
+    try:
+        logger.info("Reading binfile...")
+        binset = BinSet.read_binfile(binfile)
 
-    updated_bins = add_quality(binset.bins, Path(quality), tool)
-    out_binset = binset.model_copy(update={"bins": updated_bins})
-    out_binset.write_binfile(output, compress=compress)
+        if binset.bins is None:
+            logger.error("No bins found in the BINS file.")
+            raise click.ClickException("No bins found in the BINS file.")
+
+        logger.info(f"Adding quality scores from {Path(quality).name}...")
+        out_binset = binset.add_bin_quality_scores(Path(quality), tool)
+
+        logger.info("Updating statistics...")
+        out_binset = out_binset.update_statistics()
+
+        logger.info("Writing binfile...")
+        out_binset.write_binfile(output, compress=compress)
+        logger.info("Quality import completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

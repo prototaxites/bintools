@@ -6,7 +6,6 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
-from bin_tools.import_data.annotation import annotate_contigs
 
 
 @click.command("annotation")
@@ -20,7 +19,7 @@ from bin_tools.import_data.annotation import annotate_contigs
 @click.option(
     "--overwrite",
     type=bool,
-    help="Overwrite existing annotations if they exist.",
+    help="Overwrite existing annotations if they already exist",
     required=False,
 )
 @click.option("--output", "-o", type=click.File("wb"), default="-", required=False)
@@ -38,18 +37,28 @@ def import_annotation(
 
     BINFILE: a BINS file to add the bins to.
     """
-    binset = BinSet.read_binfile(binfile)
-
-    logger.info("Annotating contigs.")
     try:
-        annotated_contigs = annotate_contigs(
-            binset.contigs,
-            Path(gff),
-            overwrite=overwrite,
-        )
-    except (ValueError, KeyError) as e:
-        raise click.ClickException(f"Error: {e}")
-    logger.info(f"Annotated {len(annotated_contigs)} contigs")
+        logger.info("Reading binfile...")
+        binset = BinSet.read_binfile(binfile)
 
-    binset.contigs = annotated_contigs
-    binset.write_binfile(output, compress=compress)
+        logger.info(f"Adding annotations from {Path(gff).name}...")
+        try:
+            annotated_binset = binset.add_contig_annotations(
+                Path(gff), overwrite=overwrite
+            )
+        except (ValueError, KeyError) as e:
+            logger.error(f"Failed to add annotations: {e}")
+            raise click.ClickException(f"Failed to add annotations: {e}")
+
+        logger.info("Updating statistics...")
+        annotated_binset = annotated_binset.update_statistics()
+
+        logger.info("Writing binfile...")
+        annotated_binset.write_binfile(output, compress=compress)
+        logger.info("Annotation import completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

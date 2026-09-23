@@ -20,7 +20,7 @@ from bin_tools.import_data.assembly import parse_assembly_fasta
 @click.option(
     "--assembler",
     type=click.Choice(Assembler),
-    help="(optional) Name of the assembler used to produce the assembly.",
+    help="Name of the assembler used to produce the assembly (optional)",
     required=False,
 )
 @click.option("--output", "-o", type=click.File("wb"), default="-", required=False)
@@ -34,17 +34,31 @@ def import_assembly(
 
     ASSEMBLY: an (optionally gzip compressed) FASTA file containing the assembly.
     """
-    logger.info(f"Parsing assembly: {Path(assembly).name}")
     try:
-        parsed_assembly = parse_assembly_fasta(
-            Path(assembly),
-            assembler,
+        assembly_path = Path(assembly)
+        logger.info(f"Parsing assembly: {assembly_path.name}")
+
+        try:
+            parsed_assembly = parse_assembly_fasta(
+                assembly_path,
+                assembler,
+            )
+        except RuntimeError as e:
+            logger.error(f"Failed to parse assembly: {e}")
+            raise click.ClickException(f"Failed to parse assembly: {e}")
+
+        logger.info(
+            f"Successfully parsed assembly with {len(parsed_assembly) if parsed_assembly else 0} contig(s)"
         )
-    except RuntimeError as e:
-        logger.error(f"Error: {e}")
-        raise click.ClickException(f"Error: {e}")
 
-    logger.info(f"Parsed assembly: {Path(assembly).name}")
+        binset = BinSet(contigs=parsed_assembly, bins=None)
 
-    binset = BinSet(contigs=parsed_assembly, bins=None)
-    binset.write_binfile(output, compress=compress)
+        logger.info("Writing binfile...")
+        binset.write_binfile(output, compress=compress)
+        logger.info("Assembly import completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

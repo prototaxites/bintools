@@ -14,14 +14,22 @@ from bin_tools.dataclasses.binset import BinSet
     type=click.Path(dir_okay=False, file_okay=True, exists=False),
     required=True,
     default=".",
+    help="Output file path for the contig2bin mapping",
 )
 @click.option(
     "-g",
     "--group",
     type=str,
-    help="Write bins from a specific group.",
+    help="Write bins from a specific group (if not specified, all bins are included)",
 )
-@click.argument("binfile", type=click.File("rb"), nargs=1, required=True, default="-")
+@click.argument(
+    "binfile",
+    type=click.File("rb"),
+    nargs=1,
+    required=True,
+    default="-",
+    help="Input binfile to export (use '-' for stdin)",
+)
 def contig2bin(
     binfile: IO,
     output: str,
@@ -31,10 +39,22 @@ def contig2bin(
 
     BINFILE: Path to the binfile to write GFFs for.
     """
-    logger.info(f"Writing contig2bin file from {binfile.name}.")
-    binset = BinSet.read_binfile(binfile)
+    try:
+        logger.info(f"Reading binfile from {binfile.name}...")
+        binset = BinSet.read_binfile(binfile)
 
-    binset.export_contig2bin(
-        path=Path(output),
-        group=group,
-    )
+        output_path = Path(output)
+        logger.info(f"Writing contig2bin mapping to {output_path}")
+
+        binset.export_contig2bin(
+            path=output_path,
+            group=group,
+        )
+
+        logger.info("Contig2bin export completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

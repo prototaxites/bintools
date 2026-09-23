@@ -1,6 +1,6 @@
-# bintools README
+# bintools
 
-A toolkit for managing and manipulating metagenomic binning outputs. **bintools** consolidates all bin data - sequences, annotations, quality metrics, and taxonomy - into a single unified file format for streamlined analysis workflows.
+**bintools** is a toolkit for managing and manipulating metagenomic binning outputs. It consolidates all bin data, including sequences, annotations, quality metrics, and taxonomy, into a single unified file format for streamlined analysis workflows. This file can be queried, filtered, bins can be renamed using their metadata, and separate files can easily be merged to consolidate bins into a single file.
 
 ## Overview
 
@@ -12,7 +12,7 @@ Metagenomic binning produces scattered outputs: bin FASTA files, quality assessm
 - **Composable operations**: Chain commands via Unix pipes for flexible workflows
 - **Powerful filtering**: Query bins by any property (completeness, contamination, taxonomy, etc.)
 - **Compression support**: Optional zstd compression for efficient storage
-- **Multiple input sources**: Import from standard binning tools (CheckM, GTDB-Tk, etc.)
+- **Multiple input sources**: Import bin metadata from many metagenomics tools (CheckM, GTDB-Tk, etc.)
 
 ## Installation
 
@@ -28,31 +28,43 @@ pip install bin-tools ## not on pip yet!
 bintools import asm assembly.fasta -o binset.bins
 ```
 
-### 2. Add bins from your binner
+### 2. Add annotations to your binfile
+
+```bash
+bintools import annotations binset.bins annotations.gff -o binset.bins
+```
+
+### 3. Add bins from your binner
 
 ```bash
 bintools import binset binset.bins bins/ --group "myBinner" -o binset.bins
 ```
 
-### 3. Add quality scores
+### 4. Add quality scores
 
 ```bash
 bintools import quality binset.bins checkm_results.tsv --tool checkm -o binset.bins
 ```
 
-### 4. Add taxonomy
+### 5. Add taxonomy
 
 ```bash
 bintools import taxonomy binset.bins gtdbtk.tsv --tool gtdbtk -o binset.bins
 ```
 
-### 5. Filter high-quality bins
+### 6. Filter high-quality bins
 
 ```bash
 bintools filter binset.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
 ```
 
-### 6. Export to FASTA
+or, if the required data for MiMAG calls is present (completeness, contamination, tRNAs, rRNAs):
+
+```bash
+bintools filter binset.bins 'mimag == "high"' -o hq.bins
+```
+
+### 7. Export to FASTA
 
 ```bash
 bintools export fasta hq.bins -o output_directory/
@@ -103,44 +115,72 @@ List all available fields:
 bintools filter --list-fields
 ```
 
-Common fields include:
-- **Bin properties**: `id`, `group`, `import_name`, `n_contigs`
-- **Statistics**: `completeness`, `contamination`, `length`, `coverage`, `longest`, `n50`
-- **Taxonomy**: `tax_kingdom`, `tax_phylum`, `tax_class`, `tax_order`, `tax_family`, `tax_genus`, `tax_species`
-
 ## Commands
 
 ### import
 
-Import data into a binfile:
+Import data into a binfile with validation and error handling:
 
-- `bintools import asm` - Initialize from assembly FASTA
-- `bintools import binset` - Add contig clusters from binning
-- `bintools import annotation` - Add GFF annotations to contigs
-- `bintools import coverage` - Add coverage data to contigs
-- `bintools import taxonomy` - Add taxonomic classifications to bins
-- `bintools import quality` - Add quality scores (CheckM, CheckM2, BUSCO) to bins
+- **`bintools import asm`** - Initialize from assembly FASTA
+  - Handles gzip-compressed assemblies automatically
+  - Validates input format with clear error messages
+  - Supports standard and custom assembler metadata
+
+- **`bintools import binset`** - Add contig clusters from binning
+  - Accepts bin FASTA files or directories of bin files
+  - Validates file integrity before import
+  - Optional binsplit separator recovery (SemiBin2, VAMB compatibility)
+  - Custom bin rename prefix support
+
+- **`bintools import annotation`** - Add GFF annotations to contigs
+  - Validates GFF format and contig references
+  - Option to overwrite existing annotations
+  - Informative error messages for format issues
+
+- **`bintools import coverage`** - Add coverage data to contigs
+  - Supports multiple coverage tools (e.g., CoverM, custom formats)
+  - Validates coverage values and contig references
+  - Automatic statistics recalculation
+
+- **`bintools import taxonomy`** - Add taxonomic classifications to bins
+  - Supports multiple taxonomy tools (GTDB-Tk, DIAMOND, manual)
+  - Validates bin references and taxonomy format
+  - Informative errors for missing or malformed data
+
+- **`bintools import quality`** - Add quality scores (CheckM, CheckM2, BUSCO) to bins
+  - Supports multiple quality assessment tools
+  - Validates score ranges and bin references
+  - Automatic statistics recalculation
 
 ### filter
 
-Filter bins by query expression:
+Filter bins by query expression with comprehensive validation:
 
 ```bash
 bintools filter input.bins 'completeness >= 0.9' -o output.bins
 bintools filter input.bins 'completeness >= 0.9' -z -o output.bins.zstd  # compressed
+bintools filter --list-fields  # Show all available filter fields
 ```
+
+Features:
+- Validates query syntax before processing (informative parse errors)
+- Progress reporting (bins read, bins matched, bins written)
+- Shows matching bin counts before/after filtering
+- Comprehensive error handling for file I/O issues
 
 ### export
 
 Export data from a binfile:
 
-- `bintools export fasta` - Export bin sequences as FASTA
-- `bintools export gff` - Export annotations as GFF
-- `bintools export contig2bin` - Export contig-to-bin mapping (DAS_Tool format)
+- **`bintools export fasta`** - Export each bin to a FASTA file
+
+- **`bintools export gff`** - Export each bin's annotations to a GFF file
+
+- **`bintools export contig2bin`** - Export a set of bins to a contig-to-bin mapping (DAS_Tool format)
 
 ### merge
 
-Combine multiple binfiles:
+Combine multiple binfiles with progress tracking and validation:
 
 ```bash
 bintools merge set1.bins set2.bins set3.bins -o merged.bins
@@ -153,6 +193,22 @@ Remove unused contigs from a binfile:
 ```bash
 bintools trim input.bins -o trimmed.bins
 ```
+
+### rename
+
+Rename bins in a binfile with template support. Field options can be listed with `--list-fields`.
+
+```bash
+bintools rename input.bins -n "bin_{tax_phylum}" -o output.bins
+# bin1, bin2 > bin_Pseudomonadota_1, bin_Pseudomonadota_2
+```
+
+### summarise
+
+Generate summary reports:
+
+- **`bintools summarise bins`** - Export bin summary to TSV
+- **`bintools summarise contigs`** - Export contig summary to TSV
 
 ## File Format
 
@@ -211,27 +267,6 @@ bintools filter project.bins 'completeness >= 0.9 and contamination <= 0.05' \
 
 # Export to FASTA
 bintools export fasta high_quality.bins -o bins_fasta/
-```
-
-### Workflow: Compare Multiple Binning Runs
-
-```bash
-# Create separate binfiles for each binner
-bintools import asm assembly.fasta -o metabat.bins
-bintools import binset metabat.bins metabat_output/ --group "metabat" -o metabat.bins
-
-bintools import asm assembly.fasta -o vamb.bins
-bintools import binset vamb.bins vamb_output/ --group "vamb" -o vamb.bins
-
-# Merge and compare
-bintools merge metabat.bins vamb.bins -o combined.bins
-
-# Export each binner's bins separately
-bintools filter combined.bins 'group == "metabat"' -o metabat_filtered.bins
-bintools export fasta metabat_filtered.bins -o metabat_export/
-
-bintools filter combined.bins 'group == "vamb"' -o vamb_filtered.bins
-bintools export fasta vamb_filtered.bins -o vamb_export/
 ```
 
 ## License

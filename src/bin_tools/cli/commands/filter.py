@@ -4,8 +4,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
-from bin_tools.filter import filter_binset
-from bin_tools.filter.query_parser import get_available_fields
+from bin_tools.query.query_parser import get_available_fields
 
 
 @click.command("filter")
@@ -22,16 +21,25 @@ from bin_tools.filter.query_parser import get_available_fields
     type=click.File("wb"),
     default="-",
     required=False,
-    help="(optional) Output file. Defaults to stdout.",
+    help="Output file for filtered bins (defaults to stdout)",
 )
 @click.option(
     "--list-fields",
     is_flag=True,
     help="List all available fields for filtering and exit.",
 )
-@click.argument("binfile", type=click.File("rb"), required=False)
-@click.argument("query", required=False)
-def filter_cmd(
+@click.argument(
+    "binfile",
+    type=click.File("rb"),
+    required=False,
+    help="Input binfile to filter (use '-' for stdin)",
+)
+@click.argument(
+    "query",
+    required=False,
+    help="Filter query expression (e.g., 'group == \"high_quality\" and completeness >= 0.9')",
+)
+def filter_bins(
     binfile: IO | None,
     query: str | None,
     output: IO,
@@ -56,41 +64,51 @@ def filter_cmd(
         # Combine multiple conditions
         bintools filter input.bin 'group == "archaea" and completeness >= 0.8' -o output.bin
     """
-    if list_fields:
-        click.echo("Available fields for filtering:")
-        for field, description in sorted(get_available_fields().items()):
-            click.echo(f"  {field:20} - {description}")
-        return
-
-    if binfile is None:
-        logger.error("BINFILE argument is required (unless using --list-fields)")
-        raise click.ClickException(
-            "BINFILE argument is required (unless using --list-fields)"
-        )
-
-    if query is None:
-        logger.error("QUERY argument is required (unless using --list-fields)")
-        raise click.ClickException(
-            "QUERY argument is required (unless using --list-fields)"
-        )
-
-    binset = BinSet.read_binfile(binfile)
-
-    if binset.bins is None:
-        logger.warning("No bins found in input file.")
-        binset.write_binfile(output, compress=compress)
-        return
-
-    logger.info(f"Filtering {len(binset.bins)} bins with query: {query}")
-
     try:
-        filtered_binset = filter_binset(binset, query)
-    except ValueError as e:
-        raise click.ClickException(f"Invalid filter query: {e}")
+        if list_fields:
+            click.echo("Available fields for filtering:")
+            for field, description in sorted(get_available_fields().items()):
+                click.echo(f"  {field:20} - {description}")
+            return
 
-    logger.info(
-        f"Filter complete: {len(filtered_binset.bins) if filtered_binset.bins else 0} "
-        f"of {len(binset.bins)} bins matched."
-    )
+        if binfile is None:
+            logger.error("BINFILE argument is required (unless using --list-fields)")
+            raise click.ClickException(
+                "BINFILE argument is required (unless using --list-fields)"
+            )
 
-    filtered_binset.write_binfile(output, compress=compress)
+        if query is None:
+            logger.error("QUERY argument is required (unless using --list-fields)")
+            raise click.ClickException(
+                "QUERY argument is required (unless using --list-fields)"
+            )
+
+        logger.info("Reading binfile...")
+        binset = BinSet.read_binfile(binfile)
+
+        if binset.bins is None:
+            logger.warning("No bins found in input file.")
+            binset.write_binfile(output, compress=compress)
+            return
+
+        logger.info(f"Filtering {len(binset.bins)} bins with query: {query}")
+
+        try:
+            filtered_binset = binset.filter_bins(query)
+        except ValueError as e:
+            raise click.ClickException(f"Invalid filter query: {e}")
+
+        logger.info(
+            f"Filter complete: {len(filtered_binset.bins) if filtered_binset.bins else 0} "
+            f"of {len(binset.bins)} bins matched."
+        )
+
+        logger.info("Writing filtered binfile...")
+        filtered_binset.write_binfile(output, compress=compress)
+        logger.info("Filter operation completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

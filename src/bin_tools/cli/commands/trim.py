@@ -14,7 +14,14 @@ from bin_tools.dataclasses.binset import BinSet
     is_flag=True,
     help="(optional) Compress the output using zstd.",
 )
-@click.option("--output", "-o", type=click.File("wb"), default="-", required=False)
+@click.option(
+    "--output",
+    "-o",
+    type=click.File("wb"),
+    default="-",
+    required=False,
+    help="Output file for trimmed bins (defaults to stdout)",
+)
 @click.argument(
     "binfile",
     type=click.File("rb"),
@@ -30,8 +37,17 @@ def trim(
 
     BINFILE: Path to the BINS file to trim
     """
+    try:
+        logger.info(f"Reading binfile from {binfile.name}...")
+        binset = BinSet.read_binfile(binfile)
 
-    binset = BinSet.read_binfile(binfile)
-    logger.info(f"Trimming contigs from {binfile.name}")
-    trimmed_binset = binset.trim()
-    trimmed_binset.write_binfile(output, compress=compress)
+        logger.info("Trimming unreferenced contigs...")
+        trimmed_binset = binset.remove_unreferenced_contigs()
+
+        logger.info("Writing trimmed binfile...")
+        trimmed_binset.write_binfile(output, compress=compress)
+        logger.info("Trim operation completed successfully.")
+
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

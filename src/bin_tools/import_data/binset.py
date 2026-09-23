@@ -1,14 +1,15 @@
 from pathlib import Path
 
 import pyfastx
+from loguru import logger
 
 from bin_tools.bin_utils import get_basename
 from bin_tools.dataclasses.bin import Bin
 from bin_tools.dataclasses.contig import Contig
 
 
-def parse_bins(
-    bins: list[Path],
+def parse_fasta_bins(
+    fasta: list[Path],
     group: str,
     asm_contigs: dict[str, Contig],
     rename_prefix: str | None = None,
@@ -28,7 +29,7 @@ def parse_bins(
     """
     output_bins = []
 
-    for idx, bin_path in enumerate(bins):
+    for idx, bin_path in enumerate(fasta):
         b = pyfastx.Fastx(bin_path)
 
         if binsplit_separator:
@@ -50,5 +51,10 @@ def parse_bins(
         )
         bin_obj = bin_obj.update_statistics(asm_contigs)
         output_bins.append(bin_obj)
+
+    logger.info(f"Parsed {len(output_bins)} bins.")
+    if logger.level == "DEBUG":
+        for bin in output_bins:
+            logger.debug(f"Parsed bin: {bin.id}")
 
     return output_bins

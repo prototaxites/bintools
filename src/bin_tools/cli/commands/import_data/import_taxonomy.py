@@ -6,7 +6,6 @@ from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
 from bin_tools.enums import TaxonomyTool
-from bin_tools.import_data.taxonomy import add_taxonomy
 
 
 @click.command("taxonomy")
@@ -20,14 +19,14 @@ from bin_tools.import_data.taxonomy import add_taxonomy
 @click.option(
     "--tool",
     type=click.Choice(TaxonomyTool),
-    help="The tool used to assign taxonomy to the bins.",
+    help="Tool used to assign taxonomy to the bins",
     required=True,
     default=TaxonomyTool.MANUAL,
 )
 @click.option(
     "--taxonomy",
     type=click.Path(exists=True, dir_okay=False, file_okay=True),
-    help="Input file containing taxonomy information.",
+    help="Input file containing bin-level taxonomy information",
     required=True,
 )
 @click.option("--output", "-o", type=click.File("wb"), default="-", required=False)
@@ -43,11 +42,23 @@ def import_taxonomy(
 
     BINFILE: a BINS file to add the bins to
     """
-    binset = BinSet.read_binfile(binfile)
-    if binset.bins is None:
-        logger.error("No bins found in the BINS file.")
-        raise click.ClickException("No bins found in the BINS file.")
+    try:
+        logger.info("Reading binfile...")
+        binset = BinSet.read_binfile(binfile)
 
-    updated_bins = add_taxonomy(binset.bins, Path(taxonomy), tool)
-    out_binset = binset.model_copy(update={"bins": updated_bins})
-    out_binset.write_binfile(output, compress=compress)
+        if binset.bins is None:
+            logger.error("No bins found in the BINS file.")
+            raise click.ClickException("No bins found in the BINS file.")
+
+        logger.info(f"Adding taxonomy from {Path(taxonomy).name}...")
+        out_binset = binset.add_bin_taxonomy(Path(taxonomy), tool)
+
+        logger.info("Writing binfile...")
+        out_binset.write_binfile(output, compress=compress)
+        logger.info("Taxonomy import completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")

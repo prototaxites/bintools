@@ -3,8 +3,9 @@ from pathlib import Path
 from typing import Annotated
 
 from loguru import logger
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import BaseModel, Field, StringConstraints, computed_field
 
+from bin_tools.binstatistics import CalculateBinStatistics
 from bin_tools.dataclasses.contig import Contig
 from bin_tools.enums import MiMAG, QualityTool
 
@@ -31,7 +32,9 @@ class BinStatistics(BaseModel):
     quality_tool: QualityTool | None = Field(
         None, description="Quality tool used to assess the bin"
     )
-    unique_trnas: list[str] | None = Field(None, description="Unique tRNAs in the bin")
+    n_unique_trnas: int | None = Field(
+        None, description="Number of unique tRNAs in the bin"
+    )
     has_5s: bool | None = Field(None, description="Whether the bin contains 5S rRNA")
     has_16s: bool | None = Field(None, description="Whether the bin contains 16S rRNA")
     has_23s: bool | None = Field(None, description="Whether the bin contains 23S rRNA")
@@ -46,7 +49,7 @@ class BinStatistics(BaseModel):
             and self.n_circular is not None
             and self.completeness is not None
             and self.contamination is not None
-            and self.unique_trnas is not None
+            and self.n_unique_trnas is not None
             and self.has_5s is not None
             and self.has_16s is not None
             and self.has_23s is not None
@@ -54,7 +57,7 @@ class BinStatistics(BaseModel):
             conditions = {
                 MiMAG.HIGH: (
                     self.contamination <= 5
-                    and len(self.unique_trnas) >= 18
+                    and self.n_unique_trnas >= 18
                     and self.has_5s
                     and self.has_16s
                     and self.has_23s
@@ -117,6 +120,25 @@ class BinTaxonomy(BaseModel):
             self.tax_genus = parsed.get("g")
             self.tax_species = parsed.get("s")
 
+    @computed_field
+    @property
+    def taxon_name(self) -> str | None:
+        """Returns the computed taxon name, based on the classification string."""
+        parsed_classification = self._parse_classification()
+
+        order = ["s", "g", "f", "o", "c", "p", "k"]
+
+        for rank in order:
+            if rank in parsed_classification:
+                value = parsed_classification[rank]
+                if value:
+                    if rank == "s":
+                        return value
+                    else:
+                        return f"{value} sp."
+
+        return None
+
     def _parse_classification(self) -> dict[str, str | None]:
         """
         Parse the classification string into a dictionary of taxonomic parts.
@@ -144,95 +166,6 @@ class Bin(BaseModel):
     )
     taxonomy: BinTaxonomy | None = Field(None, description="Taxonomy for the bin.")
 
-    @staticmethod
-    def bin_size(contig_dict: dict[str, Contig]) -> int:
-        """Calculate the total size of the bin."""
-        return sum(contig.sequence_length for contig in contig_dict.values())
-
-    @staticmethod
-    def bin_n50(contig_dict: dict[str, Contig]) -> int:
-        """Calculate the N50 of the bin."""
-        lengths = [contig.sequence_length for contig in contig_dict.values()]
-        lengths.sort(reverse=True)
-        total = sum(lengths)
-        half = total // 2
-        for length in lengths:
-            if total >= half:
-                return length
-            total -= length
-        return 0
-
-    @staticmethod
-    def bin_longest_contig(contig_dict: dict[str, Contig]) -> int:
-        """Calculate the length of the longest contig in the bin."""
-        return max(contig.sequence_length for contig in contig_dict.values())
-
-    @staticmethod
-    def bin_n_circular(contig_dict: dict[str, Contig]) -> int:
-        """Calculate the number of circular contigs in the bin."""
-        return sum(
-            1 for contig in contig_dict.values() if contig.topology == "circular"
-        )
-
-    @staticmethod
-    def bin_unique_trnas(contig_dict: dict[str, Contig]) -> list[str]:
-        """Extract unique tRNA products from the bin."""
-        annotations = [a for c in contig_dict.values() for a in (c.annotations or [])]
-        return list(
-            {
-                product
-                for a in annotations
-                if a.feature == "tRNA"
-                and (product := a.attributes.get("product")) is not None
-            }
-        )
-
-    @staticmethod
-    def bin_has_5s(contig_dict: dict[str, Contig]) -> bool:
-        """Check if the bin contains 5S rRNA."""
-        annotations = [a for c in contig_dict.values() for a in (c.annotations or [])]
-        return any(
-            bool(a.attributes.get("product") in ["5S", "5S ribosomal RNA", "5S rRNA"])
-            for a in annotations
-            if a.feature == "rRNA"
-        )
-
-    @staticmethod
-    def bin_has_16s(contig_dict: dict[str, Contig]) -> bool:
-        """Check if the bin contains 16S rRNA."""
-        annotations = [a for c in contig_dict.values() for a in (c.annotations or [])]
-        return any(
-            bool(
-                a.attributes.get("product") in ["16S", "16S ribosomal RNA", "16S rRNA"]
-            )
-            for a in annotations
-            if a.feature == "rRNA"
-        )
-
-    @staticmethod
-    def bin_has_23s(contig_dict: dict[str, Contig]) -> bool:
-        """Check if the bin contains 23S rRNA."""
-        annotations = [a for c in contig_dict.values() for a in (c.annotations or [])]
-        return any(
-            bool(
-                a.attributes.get("product") in ["23S", "23S ribosomal RNA", "23S rRNA"]
-            )
-            for a in annotations
-            if a.feature == "rRNA"
-        )
-
-    @staticmethod
-    def bin_coverage(contig_dict: dict[str, Contig]) -> float | None:
-        """Calculate the average coverage of the bin."""
-        coverages = [
-            contig.coverage
-            for contig in contig_dict.values()
-            if contig.coverage is not None
-        ]
-        if len(coverages) == len(contig_dict):
-            return sum(coverages) / len(coverages)
-        return None
-
     def update_statistics(
         self,
         contig_dict: dict[str, Contig],
@@ -252,15 +185,17 @@ class Bin(BaseModel):
             self.statistics.model_copy() if self.statistics else BinStatistics()
         )
 
-        statistics.length = Bin.bin_size(bin_contigs)
-        statistics.longest = Bin.bin_longest_contig(bin_contigs)
+        statistics.length = CalculateBinStatistics.bin_size(bin_contigs)
+        statistics.longest = CalculateBinStatistics.bin_longest_contig(bin_contigs)
         statistics.n_contigs = len(bin_contigs)
-        statistics.n_circular = Bin.bin_n_circular(bin_contigs)
-        statistics.coverage = Bin.bin_coverage(bin_contigs)
-        statistics.unique_trnas = Bin.bin_unique_trnas(bin_contigs)
-        statistics.has_5s = Bin.bin_has_5s(bin_contigs)
-        statistics.has_16s = Bin.bin_has_16s(bin_contigs)
-        statistics.has_23s = Bin.bin_has_23s(bin_contigs)
+        statistics.n_circular = CalculateBinStatistics.bin_n_circular(bin_contigs)
+        statistics.coverage = CalculateBinStatistics.bin_coverage(bin_contigs)
+        statistics.n_unique_trnas = CalculateBinStatistics.bin_n_unique_trnas(
+            bin_contigs
+        )
+        statistics.has_5s = CalculateBinStatistics.bin_has_5s(bin_contigs)
+        statistics.has_16s = CalculateBinStatistics.bin_has_16s(bin_contigs)
+        statistics.has_23s = CalculateBinStatistics.bin_has_23s(bin_contigs)
         statistics.update_mimag()
 
         return self.model_copy(update={"statistics": statistics})

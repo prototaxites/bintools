@@ -21,6 +21,7 @@ from bin_tools.dataclasses.binset import BinSet
     type=click.Path(dir_okay=True, file_okay=False),
     required=True,
     default=".",
+    help="Output directory for FASTA files",
 )
 @click.option(
     "--preserve-headers",
@@ -34,7 +35,14 @@ from bin_tools.dataclasses.binset import BinSet
     is_flag=True,
     help="(optional) Write each FASTA in a subdirectory named after the bin's group.",
 )
-@click.argument("binfile", type=click.File("rb"), nargs=1, required=True, default="-")
+@click.argument(
+    "binfile",
+    type=click.File("rb"),
+    nargs=1,
+    required=True,
+    default="-",
+    help="Input binfile to export (use '-' for stdin)",
+)
 def fasta(
     binfile: IO,
     outdir: str,
@@ -46,15 +54,34 @@ def fasta(
 
     BINFILE: Path to the binfile to export FASTA for.
     """
-    logger.info(f"Writing bins from {binfile.name}.")
-    binset = BinSet.read_binfile(binfile)
+    try:
+        logger.info(f"Reading binfile from {binfile.name}...")
+        binset = BinSet.read_binfile(binfile)
 
-    if not Path(outdir).exists():
-        Path(outdir).mkdir(parents=True, exist_ok=True)
+        outdir_path = Path(outdir)
+        if not outdir_path.exists():
+            logger.info(f"Creating output directory: {outdir_path}")
+            try:
+                outdir_path.mkdir(parents=True, exist_ok=True)
+            except OSError as e:
+                logger.error(f"Failed to create output directory: {e}")
+                raise click.ClickException(
+                    f"Failed to create output directory {outdir}: {e}"
+                )
 
-    binset.export_fasta(
-        outdir=Path(outdir),
-        compress=compress,
-        preserve_headers=preserve_headers,
-        group_fasta=group_fasta,
-    )
+        logger.info(
+            f"Exporting {len(binset.bins) if binset.bins else 0} bin(s) to FASTA..."
+        )
+        binset.export_fasta(
+            outdir=outdir_path,
+            compress=compress,
+            preserve_headers=preserve_headers,
+            group_fasta=group_fasta,
+        )
+        logger.info("FASTA export completed successfully.")
+
+    except click.ClickException:
+        raise
+    except OSError as e:
+        logger.error(f"File I/O error: {e}")
+        raise click.ClickException(f"File I/O error: {e}")
