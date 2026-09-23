@@ -60,13 +60,13 @@ Filter bins based on quality criteria:
 
 .. code-block:: bash
 
-   bintools filter project.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
+   bintools view project.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
 
 Or use MiMAG quality levels if you have the required data:
 
 .. code-block:: bash
 
-   bintools filter project.bins 'mimag == "high"' -o hq.bins
+   bintools view project.bins 'mimag == "high"' -o hq.bins
 
 **Step 7: Export results**
 
@@ -97,7 +97,7 @@ One of the key features of bintools is composability via Unix pipes. This allows
 
 .. code-block:: bash
 
-   bintools filter project.bins 'group == "metabat" and completeness >= 0.8' -z | \
+   bintools view project.bins 'group == "metabat" and completeness >= 0.8' -z | \
      bintools export fasta -o filtered_bins/
 
 **Merge multiple binsets and filter:**
@@ -105,13 +105,13 @@ One of the key features of bintools is composability via Unix pipes. This allows
 .. code-block:: bash
 
    bintools merge set1.bins.zstd set2.bins.zstd -z | \
-     bintools filter - 'contamination <= 0.1' -o merged_hq.bins.zstd
+     bintools view - 'contamination <= 0.1' -o merged_hq.bins.zstd
 
 **Extract high-quality archaeal bins:**
 
 .. code-block:: bash
 
-   bintools filter project.bins 'tax_phylum == "Archaea" and completeness >= 0.85' -o archaea_hq.bins
+   bintools view project.bins 'tax_phylum == "Archaea" and completeness >= 0.85' -o archaea_hq.bins
 
 Common Filter Expressions
 --------------------------
@@ -120,30 +120,30 @@ Filter by quality:
 
 .. code-block:: bash
 
-   bintools filter input.bins 'completeness >= 0.9' -o output.bins
+   bintools view input.bins 'completeness >= 0.9' -o output.bins
 
 Filter by contamination:
 
 .. code-block:: bash
 
-   bintools filter input.bins 'contamination <= 0.05' -o output.bins
+   bintools view input.bins 'contamination <= 0.05' -o output.bins
 
 Filter by size:
 
 .. code-block:: bash
 
-   bintools filter input.bins 'length > 1000000' -o output.bins
+   bintools view input.bins 'length > 1000000' -o output.bins
 
 Filter by taxonomy:
 
 .. code-block:: bash
 
-   bintools filter input.bins 'tax_phylum == "Bacteroidetes"' -o output.bins
+   bintools view input.bins 'tax_phylum == "Bacteroidetes"' -o output.bins
 
 Combine multiple conditions:
 
 .. code-block:: bash
 
-   bintools filter input.bins 'completeness >= 0.9 and contamination <= 0.05 and tax_kingdom == "Bacteria"' -o output.bins
+   bintools view input.bins 'completeness >= 0.9 and contamination <= 0.05 and tax_kingdom == "Bacteria"' -o output.bins
 
 See :doc:`cli_reference` for more details on available filter fields and commands.

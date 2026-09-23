@@ -195,7 +195,7 @@ class TestFilterCommand:
         result = cli_runner.invoke(
             cli,
             [
-                "filter",
+                "view",
                 str(test_binset_file),
                 'group == "metabat"',
                 "-o",
@@ -211,7 +211,7 @@ class TestFilterCommand:
         result = cli_runner.invoke(
             cli,
             [
-                "filter",
+                "view",
                 str(test_binset_file),
                 "completeness > 0.9",
                 "-o",
@@ -226,7 +226,7 @@ class TestFilterCommand:
         result = cli_runner.invoke(
             cli,
             [
-                "filter",
+                "view",
                 str(test_binset_file),
                 "length > 0",
                 "-z",
@@ -245,7 +245,7 @@ class TestFilterCommand:
         result = cli_runner.invoke(
             cli,
             [
-                "filter",
+                "view",
                 str(test_binset_file_zstd),
                 "n_contigs == 1",
                 "-o",
@@ -268,7 +268,7 @@ class TestFilterCommand:
         """Test filter with invalid query."""
         result = cli_runner.invoke(
             cli,
-            ["filter", str(test_binset_file), "invalid_field == 'value'"],
+            ["view", str(test_binset_file), "invalid_field == 'value'"],
         )
         assert result.exit_code != 0
 
@@ -276,7 +276,7 @@ class TestFilterCommand:
         """Test filtering to stdout."""
         result = cli_runner.invoke(
             cli,
-            ["filter", str(test_binset_file), "length > 0"],
+            ["view", str(test_binset_file), "length > 0"],
         )
         assert result.exit_code == 0
 

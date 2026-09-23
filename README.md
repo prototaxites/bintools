@@ -55,13 +55,13 @@ bintools import taxonomy binset.bins gtdbtk.tsv --tool gtdbtk -o binset.bins
 ### 6. Filter high-quality bins
 
 ```bash
-bintools filter binset.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
+bintools view binset.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
 ```
 
 or, if the required data for MiMAG calls is present (completeness, contamination, tRNAs, rRNAs):
 
 ```bash
-bintools filter binset.bins 'mimag == "high"' -o hq.bins
+bintools view binset.bins 'mimag == "high"' -o hq.bins
 ```
 
 ### 7. Export to FASTA
@@ -76,35 +76,35 @@ The real power of bintools is composability via piping:
 
 ```bash
 # Filter and export in one pipeline
-bintools filter binset.bins 'group == "metabat" and completeness >= 0.8' -z | \
+bintools view binset.bins 'group == "metabat" and completeness >= 0.8' -z | \
   bintools export fasta -o filtered_bins/
 
 # Merge multiple binsets and filter
 bintools merge set1.bins.zstd set2.bins.zstd -z | \
-  bintools filter - 'contamination <= 0.1' -o merged_hq.bins.zstd
+  bintools view - 'contamination <= 0.1' -o merged_hq.bins.zstd
 
 # Extract high-quality archaeal bins
-bintools filter binset.bins 'tax_kingdom == "Archaea" and completeness >= 0.85' -o archaea_hq.bins
+bintools view binset.bins 'tax_kingdom == "Archaea" and completeness >= 0.85' -o archaea_hq.bins
 ```
 
 ## Filter Query Guide
 
-The `filter` command uses simple Python-like syntax:
+The `view` command uses simple Python-like syntax:
 
 ```bash
 # Basic comparisons
-bintools filter input.bins 'completeness >= 0.9' -o output.bins
-bintools filter input.bins 'length > 1000000' -o output.bins
+bintools view input.bins 'completeness >= 0.9' -o output.bins
+bintools view input.bins 'length > 1000000' -o output.bins
 
 # Logical operators
-bintools filter input.bins 'completeness >= 0.9 and contamination <= 0.05' -o output.bins
-bintools filter input.bins 'group == "vamb" or group == "metabat"' -o output.bins
+bintools view input.bins 'completeness >= 0.9 and contamination <= 0.05' -o output.bins
+bintools view input.bins 'group == "vamb" or group == "metabat"' -o output.bins
 
 # Taxonomy filtering
-bintools filter input.bins 'tax_phylum == "Bacteroidetes"' -o output.bins
+bintools view input.bins 'tax_phylum == "Bacteroidetes"' -o output.bins
 
 # Complex queries
-bintools filter input.bins 'group == "archaea" and completeness >= 0.8 and contamination <= 0.1' -o output.bins
+bintools view input.bins 'group == "archaea" and completeness >= 0.8 and contamination <= 0.1' -o output.bins
 ```
 
 ### Available Filter Fields
@@ -112,7 +112,7 @@ bintools filter input.bins 'group == "archaea" and completeness >= 0.8 and conta
 List all available fields:
 
 ```bash
-bintools filter --list-fields
+bintools view --list-fields
 ```
 
 ## Commands
@@ -138,14 +138,20 @@ Import data into a binfile with validation and error handling:
 - **`bintools import quality`** - Add quality scores (CheckM, CheckM2, BUSCO) to bins
   - Supports multiple quality assessment tools
 
-### filter
+### view
 
-Filter bins by query expression with comprehensive validation:
+Decompress a bins file, or filter bins by query expression with comprehensive validation:
 
 ```bash
-bintools filter input.bins 'completeness >= 0.9' -o output.bins
-bintools filter input.bins 'completeness >= 0.9' -z -o output.bins.zstd  # compressed
-bintools filter --list-fields  # Show all available filter fields
+bintools view input.bins.zstd -o input.bins  # decompress
+```
+
+or
+
+```bash
+bintools view input.bins 'completeness >= 0.9' -o output.bins
+bintools view input.bins 'completeness >= 0.9' -z -o output.bins.zstd  # compressed
+bintools view --list-fields  # Show all available filter fields
 ```
 
 ### export
@@ -240,7 +246,7 @@ bintools import quality project.bins checkm_results.tsv --tool checkm -o project
 bintools import taxonomy project.bins gtdbtk.tsv --tool gtdbtk -o project.bins
 
 # Filter to high-quality bins
-bintools filter project.bins 'completeness >= 0.9 and contamination <= 0.05' \
+bintools view project.bins 'completeness >= 0.9 and contamination <= 0.05' \
   -o high_quality.bins
 
 # Export to FASTA

@@ -148,7 +148,7 @@ To compress an existing binfile:
 
 .. code-block:: bash
 
-   bintools filter input.bins '*' -z -o input.bins.zstd
+   bintools view input.bins -z -o input.bins.zstd
 
 Performance Considerations
 ---------------------------

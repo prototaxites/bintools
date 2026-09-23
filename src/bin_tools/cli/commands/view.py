@@ -8,7 +8,7 @@ from bin_tools.export.binset_exporter import BinSetExporter
 from bin_tools.query.query_parser import get_available_fields
 
 
-@click.command("filter")
+@click.command("view")
 @click.option(
     "--compress",
     "-z",
@@ -40,7 +40,7 @@ from bin_tools.query.query_parser import get_available_fields
     required=False,
     help="Filter query expression (e.g., 'group == \"high_quality\" and completeness >= 0.9')",
 )
-def filter_bins(
+def view_bins(
     binfile: IO | None,
     query: str | None,
     output: IO,
@@ -78,14 +78,13 @@ def filter_bins(
                 "BINFILE argument is required (unless using --list-fields)"
             )
 
-        if query is None:
-            logger.error("QUERY argument is required (unless using --list-fields)")
-            raise click.ClickException(
-                "QUERY argument is required (unless using --list-fields)"
-            )
-
         logger.info("Reading binfile...")
         binset = BinSet.read_binfile(binfile)
+
+        if query is None or query.strip() == "":
+            logger.info("No filter query provided, writing full binfile.")
+            BinSetExporter(binset).write_binfile(output, compress=compress)
+            return
 
         if binset.bins is None:
             logger.warning("No bins found in input file.")

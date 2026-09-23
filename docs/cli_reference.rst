@@ -249,14 +249,14 @@ Example:
 
    bintools export contig2bin project.bins -o contig2bin.tsv
 
-Filter Command
+View Command
 ==============
 
-Filter bins based on query expressions.
+Decompress bin files, and filter bins based on query expressions.
 
 .. code-block:: bash
 
-   bintools filter BINFILE QUERY [OPTIONS]
+   bintools view BINFILE QUERY [OPTIONS]
 
 Arguments:
 
@@ -274,16 +274,16 @@ Examples:
 .. code-block:: bash
 
    # Filter by quality
-   bintools filter project.bins 'completeness >= 0.9' -o hq.bins
+   bintools view project.bins 'completeness >= 0.9' -o hq.bins
 
    # Filter by multiple criteria
-   bintools filter project.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
+   bintools view project.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
 
    # Filter by taxonomy
-   bintools filter project.bins 'tax_phylum == "Bacteroidetes"' -o output.bins
+   bintools view project.bins 'tax_phylum == "Bacteroidetes"' -o output.bins
 
    # Filter by group
-   bintools filter project.bins 'group == "metabat"' -o output.bins
+   bintools view project.bins 'group == "metabat"' -o output.bins
 
 Available filter fields (see ``--list-fields`` for complete list):
 
