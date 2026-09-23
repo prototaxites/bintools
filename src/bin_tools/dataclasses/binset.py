@@ -101,9 +101,10 @@ class BinSet(BaseModel):
         Returns:
             A new BinSet with the bins added
         """
-        bins = parse_fasta_bins(fasta, group, self.contigs, binsplit_separator)
+        out_bins = [] if self.bins is None else self.bins
+        new_bins = parse_fasta_bins(fasta, group, self.contigs, binsplit_separator)
 
-        return self.model_copy(update={"bins": bins})
+        return self.model_copy(update={"bins": out_bins + new_bins})
 
     def add_contig_coverage(
         self, coverage_file: Path, coverage_tool: CoverageTool
