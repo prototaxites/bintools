@@ -9,5 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Documentation
+docs/_build/
+docs/.doctrees/
+
 .DS_Store
 .pytest_cache
