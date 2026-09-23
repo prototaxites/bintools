@@ -1,4 +1,0 @@
-id	header	sequence_length	topology	coverage	gc	trnas	has_5s	has_16s	has_23s
-contig1	contig1 circular=yes	12	linear		0.5	tRNA-Ala,tRNA-Arg,tRNA-Asn,tRNA-Asp,tRNA-Cys,tRNA-Gln,tRNA-Glu,tRNA-Gly,tRNA-His,tRNA-Ile,tRNA-Leu,tRNA-Lys,tRNA-Met,tRNA-Phe,tRNA-Pro,tRNA-Ser,tRNA-Thr,tRNA-Trp	True	True	True
-contig2	contig2 circular=no	12	linear		0.5	tRNA-Val,tRNA-Trp,tRNA-Sec	False	True	False
-contig3	contig3 circular=no	12	linear		0.5833333333333334		False	False	False
