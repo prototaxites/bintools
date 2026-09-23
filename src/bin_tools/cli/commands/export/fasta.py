@@ -5,6 +5,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("fasta")
@@ -72,7 +73,7 @@ def fasta(
         logger.info(
             f"Exporting {len(binset.bins) if binset.bins else 0} bin(s) to FASTA..."
         )
-        binset.export_fasta(
+        BinSetExporter(binset).export_fasta(
             outdir=outdir_path,
             compress=compress,
             preserve_headers=preserve_headers,

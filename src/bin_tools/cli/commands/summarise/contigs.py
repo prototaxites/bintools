@@ -5,6 +5,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("contigs")
@@ -36,7 +37,7 @@ def summarise_contigs(
         output_path = Path(output)
         logger.info(f"Writing contig summary to {output_path}")
 
-        binset.write_contig_summary_tsv(output_path=output_path)
+        BinSetExporter(binset).write_contig_summary_tsv(output_path=output_path)
 
         logger.info("Contig summary completed successfully.")
 

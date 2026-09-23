@@ -4,6 +4,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 from bin_tools.query.query_parser import get_available_fields
 
 
@@ -88,7 +89,7 @@ def filter_bins(
 
         if binset.bins is None:
             logger.warning("No bins found in input file.")
-            binset.write_binfile(output, compress=compress)
+            BinSetExporter(binset).write_binfile(output, compress=compress)
             return
 
         logger.info(f"Filtering {len(binset.bins)} bins with query: {query}")
@@ -104,7 +105,7 @@ def filter_bins(
         )
 
         logger.info("Writing filtered binfile...")
-        filtered_binset.write_binfile(output, compress=compress)
+        BinSetExporter(filtered_binset).write_binfile(output, compress=compress)
         logger.info("Filter operation completed successfully.")
 
     except click.ClickException:

@@ -5,6 +5,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("gff")
@@ -57,7 +58,7 @@ def gff(
         logger.info(
             f"Exporting {len(binset.bins) if binset.bins else 0} bin(s) to GFF..."
         )
-        binset.export_gff(
+        BinSetExporter(binset).export_gff(
             outdir=outdir_path,
             group_gff=group_gff,
         )

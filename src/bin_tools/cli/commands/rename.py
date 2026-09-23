@@ -4,6 +4,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 from bin_tools.query.query_parser import get_available_fields
 
 
@@ -67,7 +68,7 @@ def rename_bins(
         trimmed_binset = binset.rename_bins(bin_name)
 
         logger.info("Writing renamed binfile...")
-        trimmed_binset.write_binfile(output, compress=compress)
+        BinSetExporter(trimmed_binset).write_binfile(output, compress=compress)
         logger.info("Rename operation completed successfully.")
 
     except OSError as e:

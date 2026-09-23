@@ -4,6 +4,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 from bin_tools.operations.merge import merge_binsets
 
 
@@ -50,7 +51,7 @@ def merge(
         merged = merge_binsets(binsets)
 
         logger.info("Writing merged binfile...")
-        merged.write_binfile(output, compress=compress)
+        BinSetExporter(merged).write_binfile(output, compress=compress)
         logger.info("Merge operation completed successfully.")
 
     except click.ClickException:

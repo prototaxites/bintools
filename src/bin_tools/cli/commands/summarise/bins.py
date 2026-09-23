@@ -5,6 +5,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("bins")
@@ -50,7 +51,7 @@ def summarise_bins(
         output_path = Path(output)
         logger.info(f"Writing bin summary to {output_path}")
 
-        binset.write_bin_summary_tsv(
+        BinSetExporter(binset).write_bin_summary_tsv(
             output_path=output_path,
             include_statistics=include_statistics,
             include_taxonomy=include_taxonomy,

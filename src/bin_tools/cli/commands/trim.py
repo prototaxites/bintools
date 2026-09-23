@@ -4,6 +4,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("trim")
@@ -45,7 +46,7 @@ def trim(
         trimmed_binset = binset.remove_unreferenced_contigs()
 
         logger.info("Writing trimmed binfile...")
-        trimmed_binset.write_binfile(output, compress=compress)
+        BinSetExporter(trimmed_binset).write_binfile(output, compress=compress)
         logger.info("Trim operation completed successfully.")
 
     except OSError as e:

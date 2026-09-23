@@ -6,6 +6,7 @@ from loguru import logger
 
 from bin_tools.bin_utils import find_binfiles
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("binset")
@@ -89,7 +90,7 @@ def import_binset(
             raise click.ClickException(f"Failed to add bins: {e}")
 
         logger.info("Writing binfile...")
-        out_binset.write_binfile(output, compress=compress)
+        BinSetExporter(out_binset).write_binfile(output, compress=compress)
         logger.info("Binset import completed successfully.")
 
     except click.ClickException:

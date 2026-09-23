@@ -6,6 +6,7 @@ from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
 from bin_tools.enums import CoverageTool
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("coverage")
@@ -52,7 +53,7 @@ def import_coverage(
         out_binset = out_binset.update_statistics()
 
         logger.info("Writing binfile...")
-        out_binset.write_binfile(output, compress=compress)
+        BinSetExporter(out_binset).write_binfile(output, compress=compress)
         logger.info("Coverage import completed successfully.")
 
     except click.ClickException:

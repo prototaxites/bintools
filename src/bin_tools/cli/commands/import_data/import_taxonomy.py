@@ -6,6 +6,7 @@ from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
 from bin_tools.enums import TaxonomyTool
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("taxonomy")
@@ -54,7 +55,7 @@ def import_taxonomy(
         out_binset = binset.add_bin_taxonomy(Path(taxonomy), tool)
 
         logger.info("Writing binfile...")
-        out_binset.write_binfile(output, compress=compress)
+        BinSetExporter(out_binset).write_binfile(output, compress=compress)
         logger.info("Taxonomy import completed successfully.")
 
     except click.ClickException:

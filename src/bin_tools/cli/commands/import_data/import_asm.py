@@ -6,6 +6,7 @@ from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
 from bin_tools.enums import Assembler
+from bin_tools.export.binset_exporter import BinSetExporter
 from bin_tools.import_data.assembly import parse_assembly_fasta
 
 
@@ -54,7 +55,7 @@ def import_assembly(
         binset = BinSet(contigs=parsed_assembly, bins=None)
 
         logger.info("Writing binfile...")
-        binset.write_binfile(output, compress=compress)
+        BinSetExporter(binset).write_binfile(output, compress=compress)
         logger.info("Assembly import completed successfully.")
 
     except click.ClickException:

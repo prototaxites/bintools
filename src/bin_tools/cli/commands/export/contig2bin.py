@@ -5,6 +5,7 @@ import click
 from loguru import logger
 
 from bin_tools.dataclasses.binset import BinSet
+from bin_tools.export.binset_exporter import BinSetExporter
 
 
 @click.command("contig2bin")
@@ -46,7 +47,7 @@ def contig2bin(
         output_path = Path(output)
         logger.info(f"Writing contig2bin mapping to {output_path}")
 
-        binset.export_contig2bin(
+        BinSetExporter(binset).export_contig2bin(
             path=output_path,
             group=group,
         )
