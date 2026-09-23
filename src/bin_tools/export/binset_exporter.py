@@ -189,8 +189,17 @@ class BinSetExporter:
             logger.warning("No bins to write.")
             return
 
+        # Collect all unique fieldnames from all bins
+        all_fieldnames = []
+        seen = set()
+        for row in summarised:
+            for key in row:
+                if key not in seen:
+                    all_fieldnames.append(key)
+                    seen.add(key)
+
         with open(output_path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=summarised[0].keys(), delimiter="\t")
+            writer = csv.DictWriter(f, fieldnames=all_fieldnames, delimiter="\t")
             writer.writeheader()
             writer.writerows(summarised)
 
