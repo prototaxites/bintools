@@ -12,7 +12,6 @@ def parse_fasta_bins(
     fasta: list[Path],
     group: str,
     asm_contigs: dict[str, Contig],
-    rename_prefix: str | None = None,
     binsplit_separator: str | None = None,
 ) -> list[Bin]:
     """
@@ -21,7 +20,6 @@ def parse_fasta_bins(
     Args:
         bins: A list of paths to the bin files.
         group: The group to assign to the bins.
-        rename_prefix: An optional prefix to use to rename bin ids - otherwise, use the file basename.
         binsplit_separator: If binsplitting was used to generate the contigs, the separator to use to split the contig id and sample id.
 
     Returns:
@@ -37,10 +35,7 @@ def parse_fasta_bins(
         else:
             contigs = [id for id, seq in b]
 
-        if rename_prefix:
-            id = f"{rename_prefix}_{idx + 1}"
-        else:
-            id = get_basename(bin_path)
+        id = get_basename(bin_path)
 
         bin_obj = Bin(
             id=id,

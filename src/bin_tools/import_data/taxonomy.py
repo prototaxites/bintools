@@ -56,4 +56,4 @@ class TaxonomyReader:
             out_bin.taxonomy = taxonomy.get(bin.id, None)
             out_bins.append(out_bin)
 
-        return bins
+        return out_bins

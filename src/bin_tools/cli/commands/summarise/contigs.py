@@ -19,7 +19,7 @@ from bin_tools.export.binset_exporter import BinSetExporter
 @click.argument(
     "binfile",
     type=click.File("rb"),
-    nargs=-1,
+    nargs=1,
     required=True,
 )
 def summarise_contigs(

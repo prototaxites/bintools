@@ -80,7 +80,7 @@ class BinTaxonomy(BaseModel):
     classification: Annotated[
         str,
         StringConstraints(
-            pattern=r"^k__.*;p__.*;c__.*;o__.*;f__.*;g__.*;s__.*$|^unknown$"
+            pattern=r"^[dk]__.*;p__.*;c__.*;o__.*;f__.*;g__.*;s__.*$|^unknown$"
         ),
     ] = Field(
         ...,
@@ -112,7 +112,7 @@ class BinTaxonomy(BaseModel):
             ]
         ):
             parsed = self._parse_classification()
-            self.tax_kingdom = parsed.get("k")
+            self.tax_kingdom = parsed.get("k") if parsed.get("k") else parsed.get("d")
             self.tax_phylum = parsed.get("p")
             self.tax_class = parsed.get("c")
             self.tax_order = parsed.get("o")
@@ -126,7 +126,7 @@ class BinTaxonomy(BaseModel):
         """Returns the computed taxon name, based on the classification string."""
         parsed_classification = self._parse_classification()
 
-        order = ["s", "g", "f", "o", "c", "p", "k"]
+        order = ["s", "g", "f", "o", "c", "p", "k", "d"]
 
         for rank in order:
             if rank in parsed_classification:

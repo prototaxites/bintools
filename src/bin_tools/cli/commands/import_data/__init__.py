@@ -4,6 +4,7 @@ from bin_tools.cli.commands.import_data.import_annotation import import_annotati
 from bin_tools.cli.commands.import_data.import_asm import import_assembly
 from bin_tools.cli.commands.import_data.import_bins import import_binset
 from bin_tools.cli.commands.import_data.import_coverage import import_coverage
+from bin_tools.cli.commands.import_data.import_quality import import_quality
 from bin_tools.cli.commands.import_data.import_taxonomy import import_taxonomy
 
 
@@ -21,3 +22,4 @@ import_group.add_command(import_binset)
 import_group.add_command(import_annotation)
 import_group.add_command(import_coverage)
 import_group.add_command(import_taxonomy)
+import_group.add_command(import_quality)

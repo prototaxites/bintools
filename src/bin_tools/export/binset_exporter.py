@@ -1,5 +1,6 @@
 import csv
 from pathlib import Path
+from typing import IO
 
 import click
 import zstandard as zstd

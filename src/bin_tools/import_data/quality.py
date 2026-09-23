@@ -15,6 +15,7 @@ class QualityReader:
         bin_id_col: str,
         completeness_col: str,
         contamination_col: str,
+        is_percentage: bool = False,
     ) -> dict[str, tuple[float, float]]:
         """Generic CSV parser for quality tools."""
         results = {}
@@ -26,6 +27,11 @@ class QualityReader:
                     float(row[completeness_col]),
                     float(row[contamination_col]),
                 )
+                if is_percentage:
+                    results[bin_id] = (
+                        results[bin_id][0] / 100,
+                        results[bin_id][1] / 100,
+                    )
         return results
 
     def add_quality_scores(
@@ -44,19 +50,31 @@ class QualityReader:
         """
         if qc_tool == QualityTool.CHECKM:
             results = self._parse_quality_csv(
-                quality_file, "Bin id", "completeness", "contamination"
+                quality_file,
+                "Bin id",
+                "completeness",
+                "contamination",
+                is_percentage=True,
             )
         elif qc_tool == QualityTool.CHECKM2:
             results = self._parse_quality_csv(
-                quality_file, "Name", "Completeness", "Contamination"
+                quality_file,
+                "Name",
+                "Completeness",
+                "Contamination",
+                is_percentage=True,
             )
         elif qc_tool == QualityTool.BUSCO:
             results = self._parse_quality_csv(
-                quality_file, "Input_file", "Complete", "Duplicated"
+                quality_file, "Input_file", "Complete", "Duplicated", is_percentage=True
             )
         else:
             results = self._parse_quality_csv(
-                quality_file, "File", "Completeness", "Contamination"
+                quality_file,
+                "File",
+                "Completeness",
+                "Contamination",
+                is_percentage=True,
             )
 
         out_bins = []

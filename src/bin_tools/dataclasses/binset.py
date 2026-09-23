@@ -88,7 +88,6 @@ class BinSet(BaseModel):
         self,
         fasta: list[Path],
         group: str,
-        rename_prefix: str | None,
         binsplit_separator: str | None,
     ) -> "BinSet":
         """Add bins from a FASTA file to the BinSet.
@@ -102,9 +101,7 @@ class BinSet(BaseModel):
         Returns:
             A new BinSet with the bins added
         """
-        bins = parse_fasta_bins(
-            fasta, group, self.contigs, rename_prefix, binsplit_separator
-        )
+        bins = parse_fasta_bins(fasta, group, self.contigs, binsplit_separator)
 
         return self.model_copy(update={"bins": bins})
 
