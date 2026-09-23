@@ -122,35 +122,21 @@ bintools filter --list-fields
 Import data into a binfile with validation and error handling:
 
 - **`bintools import asm`** - Initialize from assembly FASTA
-  - Handles gzip-compressed assemblies automatically
-  - Validates input format with clear error messages
-  - Supports standard and custom assembler metadata
+  - Can detect circular contigs from metaMDBG and myloasm
 
 - **`bintools import binset`** - Add contig clusters from binning
-  - Accepts bin FASTA files or directories of bin files
-  - Validates file integrity before import
   - Optional binsplit separator recovery (SemiBin2, VAMB compatibility)
-  - Custom bin rename prefix support
 
 - **`bintools import annotation`** - Add GFF annotations to contigs
-  - Validates GFF format and contig references
-  - Option to overwrite existing annotations
-  - Informative error messages for format issues
 
 - **`bintools import coverage`** - Add coverage data to contigs
   - Supports multiple coverage tools (e.g., CoverM, custom formats)
-  - Validates coverage values and contig references
-  - Automatic statistics recalculation
 
 - **`bintools import taxonomy`** - Add taxonomic classifications to bins
-  - Supports multiple taxonomy tools (GTDB-Tk, DIAMOND, manual)
-  - Validates bin references and taxonomy format
-  - Informative errors for missing or malformed data
+  - Supports multiple taxonomy tools (GTDB-Tk, gtdb_to_ncbi_majority_vote.py, manual)
 
 - **`bintools import quality`** - Add quality scores (CheckM, CheckM2, BUSCO) to bins
   - Supports multiple quality assessment tools
-  - Validates score ranges and bin references
-  - Automatic statistics recalculation
 
 ### filter
 
@@ -162,20 +148,12 @@ bintools filter input.bins 'completeness >= 0.9' -z -o output.bins.zstd  # compr
 bintools filter --list-fields  # Show all available filter fields
 ```
 
-Features:
-- Validates query syntax before processing (informative parse errors)
-- Progress reporting (bins read, bins matched, bins written)
-- Shows matching bin counts before/after filtering
-- Comprehensive error handling for file I/O issues
-
 ### export
 
 Export data from a binfile:
 
 - **`bintools export fasta`** - Export each bin to a FASTA file
-
 - **`bintools export gff`** - Export each bin's annotations to a GFF file
-
 - **`bintools export contig2bin`** - Export a set of bins to a contig-to-bin mapping (DAS_Tool format)
 
 ### merge
