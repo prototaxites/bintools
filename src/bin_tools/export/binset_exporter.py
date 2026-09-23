@@ -116,7 +116,7 @@ class BinSetExporter:
         if self.binset.bins is None:
             return out_list
         for bin in self.binset.bins:
-            bin_dict = bin.model_dump(exclude={"statistics", "taxonomy"})
+            bin_dict = bin.model_dump(exclude={"statistics", "taxonomy", "contigs"})
 
             if include_statistics:
                 if bin.statistics is not None:

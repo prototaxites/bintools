@@ -21,12 +21,14 @@ from bin_tools.export.binset_exporter import BinSetExporter
     "-s",
     is_flag=True,
     help="(optional) Include statistics in the output.",
+    default=True,
 )
 @click.option(
     "--include-taxonomy",
     "-t",
     is_flag=True,
     help="(optional) Include taxonomy in the output.",
+    default=True,
 )
 @click.argument(
     "binfile",
