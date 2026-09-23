@@ -149,11 +149,3 @@ To compress an existing binfile:
 .. code-block:: bash
 
    bintools view input.bins -z -o input.bins.zstd
-
-Performance Considerations
----------------------------
-
-- **File size**: Uncompressed `.bins` files are typically 2-3x larger than the original FASTA files
-- **Zstd compression**: Reduces file size by ~50-70% with minimal CPU overhead
-- **Memory usage**: Full binfile is loaded into memory; very large projects (>100,000 contigs) may require significant RAM
-- **I/O performance**: Piping between commands keeps data in memory, avoiding disk I/O
