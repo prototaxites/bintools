@@ -1,7 +1,7 @@
 Quick Start
 ===========
 
-This guide walks you through the basic workflow of using bintools.
+This guide walks you through the basic workflow of using metabintools.
 
 Basic Workflow
 --------------
@@ -91,7 +91,7 @@ Export in DAS_Tool format for merging:
 Composable Workflows
 --------------------
 
-One of the key features of bintools is composability via Unix pipes. This allows you to chain operations efficiently.
+One of the key features of metabintools is composability via Unix pipes. This allows you to chain operations efficiently.
 
 **Filter and export in one pipeline:**
 

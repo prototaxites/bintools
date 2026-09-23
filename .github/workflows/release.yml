@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: tag-release
-      url: https://pypi.org/p/bin-tools
+      url: https://pypi.org/p/metabintools
     permissions:
       id-token: write
 

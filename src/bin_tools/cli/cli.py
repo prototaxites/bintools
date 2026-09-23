@@ -17,7 +17,7 @@ def cli():
     logger.remove()
     logger.add(
         sys.stderr,
-        format="[{time:HH:mm:ss}] | bintools | {level} - {message}",
+        format="[{time:HH:mm:ss}] | metabintools | {level} - {message}",
         level="INFO",
     )
 

@@ -1,10 +1,10 @@
-# bintools
+# metabintools
 
-**bintools** is a toolkit for managing and manipulating metagenomic binning outputs. It consolidates all bin data, including sequences, annotations, quality metrics, and taxonomy, into a single unified file format for streamlined analysis workflows. This file can be queried, filtered, bins can be renamed using their metadata, and separate files can easily be merged to consolidate bins into a single file.
+**metabintools** is a toolkit for managing and manipulating metagenomic binning outputs. It consolidates all bin data, including sequences, annotations, quality metrics, and taxonomy, into a single unified file format for streamlined analysis workflows. This file can be queried, filtered, bins can be renamed using their metadata, and separate files can easily be merged to consolidate bins into a single file.
 
 ## Overview
 
-Metagenomic binning produces scattered outputs: bin FASTA files, quality assessments, taxonomic classifications, and annotations in separate formats. **bintools** unifies these into a single `.bins` file (optionally compressed as `.bins.zstd`), enabling easy filtering, merging, and export via composable command-line operations.
+Metagenomic binning produces scattered outputs: bin FASTA files, quality assessments, taxonomic classifications, and annotations in separate formats. **metabintools** unifies these into a single `.bins` file (optionally compressed as `.bins.zstd`), enabling easy filtering, merging, and export via composable command-line operations.
 
 ## Key Features
 
@@ -17,7 +17,7 @@ Metagenomic binning produces scattered outputs: bin FASTA files, quality assessm
 ## Installation
 
 ```bash
-pip install bin-tools ## not on pip yet!
+pip install metabintools
 ```
 
 ## Quick Start
@@ -72,7 +72,7 @@ bintools export fasta hq.bins -o output_directory/
 
 ## Composable Workflows
 
-The real power of bintools is composability via piping:
+The real power of metabintools is composability via piping:
 
 ```bash
 # Filter and export in one pipeline

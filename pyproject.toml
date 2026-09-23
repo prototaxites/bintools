@@ -1,5 +1,5 @@
 [project]
-name = "bin-tools"
+name = "metabintools"
 version = "0.1.0"
 description = "A toolkit for collating and manipulating metagenome bins."
 readme = "README.md"
@@ -18,6 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
+metabintools = "bin_tools.cli.cli:cli"
 bintools = "bin_tools.cli.cli:cli"
 
 [build-system]

@@ -1,7 +1,7 @@
 API Reference
 =============
 
-This page provides detailed documentation of the bintools Python API for programmatic use.
+This page provides detailed documentation of the metabintools Python API for programmatic use.
 
 Core Data Structures
 ====================
@@ -172,7 +172,7 @@ Example Usage
 Programmatic Workflow
 ---------------------
 
-Here's an example of using bintools as a Python library:
+Here's an example of using metabintools as a Python library:
 
 .. code-block:: python
 

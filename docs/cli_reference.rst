@@ -1,7 +1,7 @@
 CLI Reference
 ==============
 
-This page documents the complete command-line interface for bintools.
+This page documents the complete command-line interface for metabintools.
 
 All commands support reading from stdin (``-``) and writing to stdout (``-``), enabling Unix pipes.
 Commands support compression with the ``-z`` flag, and the format is auto-detected on input.

@@ -142,7 +142,7 @@ The individual rank fields are:
 Compression
 -----------
 
-Files ending in ``.bins.zstd`` are compressed using Zstandard. Most bintools commands automatically detect and handle compression, so you can use compressed and uncompressed files interchangeably.
+Files ending in ``.bins.zstd`` are compressed using Zstandard. Most metabintools commands automatically detect and handle compression, so you can use compressed and uncompressed files interchangeably.
 
 To compress an existing binfile:
 
