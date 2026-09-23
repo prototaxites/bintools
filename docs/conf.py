@@ -38,8 +38,6 @@ autodoc_default_options = {
 
 # HTML output settings
 html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
-html_logo = None
 html_theme_options = {
     "logo_only": False,
     "prev_next_buttons_location": "bottom",
@@ -74,4 +72,5 @@ pygments_style = "sphinx"
 suppress_warnings = [
     "app.add_autodocumenter",
     "misc.highlighting_failure",
+    "intersphinx.external",
 ]
