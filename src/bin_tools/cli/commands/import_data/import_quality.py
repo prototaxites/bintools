@@ -22,7 +22,7 @@ from bin_tools.export.binset_exporter import BinSetExporter
     type=click.Choice(QualityTool),
     help="The tool used to assess the quality of the bins.",
     required=True,
-    default=QualityTool.MANUAL,
+    default=QualityTool.manual,
 )
 @click.option(
     "--quality",
@@ -41,7 +41,11 @@ def import_quality(
 ):
     """Add a set of quality scores to a BINS file.
 
-    BINFILE: a BINS file to add the bins to
+    The quality TSV can come from CheckM, CheckM2, or BUSCO, or a manual user-provided TSV.
+
+    A user-supplied TSV must have the fields File, Completeness, and Contamination.
+
+    BINFILE: a BINS file to add the quality to
     """
     try:
         logger.info("Reading binfile...")

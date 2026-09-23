@@ -36,7 +36,7 @@ def import_annotation(
 ):
     """Add annotations from a GFF file to a BINS file
 
-    BINFILE: a BINS file to add the bins to.
+    BINFILE: a BINS file to add the annotations to.
     """
     try:
         logger.info("Reading binfile...")

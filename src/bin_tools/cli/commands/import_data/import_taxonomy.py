@@ -22,7 +22,7 @@ from bin_tools.export.binset_exporter import BinSetExporter
     type=click.Choice(TaxonomyTool),
     help="Tool used to assign taxonomy to the bins",
     required=True,
-    default=TaxonomyTool.MANUAL,
+    default=TaxonomyTool.manual,
 )
 @click.option(
     "--taxonomy",
@@ -41,7 +41,11 @@ def import_taxonomy(
 ):
     """Add a set of quality scores to a BINS file.
 
-    BINFILE: a BINS file to add the bins to
+    The taxonomy TSV can come from GTDB-Tk or GTDB-Tk's gtdb_to_ncbi_majority_vote.py script, or a manual user-provided TSV.
+
+    A manual TSV must have the fields File and Classification (a lineage string of format k__.*;p__.*...).
+
+    BINFILE: a BINS file to add the taxonomy to
     """
     try:
         logger.info("Reading binfile...")

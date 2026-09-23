@@ -48,15 +48,15 @@ class QualityReader:
         Returns:
             list[Bin]: The updated list of bins with quality information.
         """
-        if qc_tool == QualityTool.CHECKM:
+        if qc_tool == QualityTool.checkm:
             results = self._parse_quality_csv(
                 quality_file,
-                "Bin id",
+                "Bin Id",
                 "completeness",
                 "contamination",
                 is_percentage=True,
             )
-        elif qc_tool == QualityTool.CHECKM2:
+        elif qc_tool == QualityTool.checkm2:
             results = self._parse_quality_csv(
                 quality_file,
                 "Name",
@@ -64,7 +64,7 @@ class QualityReader:
                 "Contamination",
                 is_percentage=True,
             )
-        elif qc_tool == QualityTool.BUSCO:
+        elif qc_tool == QualityTool.busco:
             results = self._parse_quality_csv(
                 quality_file, "Input_file", "Complete", "Duplicated", is_percentage=True
             )
@@ -91,6 +91,7 @@ class QualityReader:
                     update={
                         "completeness": completeness,
                         "contamination": contamination,
+                        "quality_tool": qc_tool,
                     }
                 )
                 out_bin = bin.model_copy(update={"statistics": statistics})

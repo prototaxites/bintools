@@ -22,6 +22,7 @@ from bin_tools.export.binset_exporter import BinSetExporter
     type=click.Choice(CoverageTool),
     help="Tool used to estimate coverage",
     required=False,
+    default=CoverageTool.metabat,
 )
 @click.option("--output", "-o", type=click.File("wb"), default="-", required=False)
 @click.argument("binfile", type=click.File("rb"), required=True, default="-")
@@ -38,9 +39,11 @@ def import_coverage(
     tool: CoverageTool,
     compress: bool = False,
 ):
-    """Add annotations from a GFF file to a BINS file
+    """Add quality scores to a BINS file from a coverage file.
 
-    BINFILE: a BINS file to add the bins to.
+    The coverage file must come from Metabat2's jgi_summarize_bam_depths script.
+
+    BINFILE: a BINS file to add the coverage to
     """
     try:
         logger.info("Reading binfile...")

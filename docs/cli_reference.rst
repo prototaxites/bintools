@@ -18,12 +18,15 @@ Import a metagenomic assembly to initialize a binfile.
 
 .. code-block:: bash
 
-   bintools import asm ASSEMBLY [OPTIONS] -o OUTPUT.bins
+   bintools import asm ASSEMBLY [OPTIONS]
+
+Arguments:
+
+- ``ASSEMBLY``: Input FASTA file (required; path to file)
 
 Options:
 
-- ``ASSEMBLY``: Input FASTA file (required)
-- ``--assembler {spades,megahit,flye,metamdbg,myloasm,hifiasm_meta}``: Assembler used (optional)
+- ``--assembler {spades,megahit,flye,metamdbg,myloasm,hifiasm_meta}``: Assembler used to generate the assembly (optional)
 - ``--compress, -z``: Compress output with zstd
 - ``--output, -o``: Output binfile path (default: stdout)
 
@@ -77,12 +80,12 @@ Add GFF3 annotations to contigs.
 
 Arguments:
 
-- ``BINFILE``: Binfile to annotate
-- ``GFF``: GFF3 annotation file
+- ``BINFILE``: Binfile to annotate (use ``-`` for stdin)
+- ``GFF``: GFF3 annotation file (path to file)
 
 Options:
 
-- ``--overwrite``: Overwrite existing annotations
+- ``--overwrite``: Overwrite existing annotations (flag, default: false)
 - ``--compress, -z``: Compress output with zstd
 - ``--output, -o``: Output binfile path (default: stdout)
 
@@ -99,16 +102,16 @@ Add coverage data to contigs.
 
 .. code-block:: bash
 
-   bintools import coverage BINFILE COVERAGE --tool TOOL [OPTIONS]
+   bintools import coverage BINFILE COVERAGE [OPTIONS]
 
 Arguments:
 
-- ``BINFILE``: Binfile to add coverage to
-- ``COVERAGE``: Coverage file
+- ``BINFILE``: Binfile to add coverage to (use ``-`` for stdin)
+- ``COVERAGE``: Coverage file from Metabat2's jgi_summarize_bam_depths script
 
 Options:
 
-- ``--tool {metabat}``: Tool that generated the coverage file
+- ``--tool {metabat}``: Tool that generated the coverage file (default: metabat)
 - ``--compress, -z``: Compress output with zstd
 - ``--output, -o``: Output binfile path (default: stdout)
 
@@ -129,14 +132,19 @@ Add quality scores from binning assessment tools.
 
 Arguments:
 
-- ``BINFILE``: Binfile to add quality to
+- ``BINFILE``: Binfile to add quality to (use ``-`` for stdin)
 
 Options:
 
 - ``--quality FILE``: Quality assessment file (required)
-- ``--tool {checkm,checkm2,busco,manual}``: QC tool used
+- ``--tool {checkm,checkm2,busco,manual}``: QC tool used (default: manual)
 - ``--compress, -z``: Compress output with zstd
 - ``--output, -o``: Output binfile path (default: stdout)
+
+Notes:
+
+- For CheckM, CheckM2, and BUSCO: use output files directly
+- For manual TSV: must have fields ``File``, ``Completeness``, and ``Contamination``
 
 Example:
 
@@ -155,14 +163,20 @@ Add taxonomic classifications to bins.
 
 Arguments:
 
-- ``BINFILE``: Binfile to add taxonomy to
+- ``BINFILE``: Binfile to add taxonomy to (use ``-`` for stdin)
 
 Options:
 
 - ``--taxonomy FILE``: Taxonomy file (required)
-- ``--tool {gtdbtk,gtdbtk_ncbi,manual}``: Taxonomy tool used
+- ``--tool {gtdbtk,gtdbtk_ncbi,manual}``: Taxonomy tool used (default: manual)
 - ``--compress, -z``: Compress output with zstd
 - ``--output, -o``: Output binfile path (default: stdout)
+
+Notes:
+
+- For GTDB-Tk: use the ar122_summary.tsv or bac120_summary.tsv files
+- For GTDB-Tk NCBI: use output from gtdb_to_ncbi_majority_vote.py script
+- For manual TSV: must have fields ``File`` and ``Classification`` (lineage string format: k__.*;p__.*...)
 
 Example:
 
@@ -236,12 +250,12 @@ Export contig-to-bin mapping in DAS_Tool format.
 
 Arguments:
 
-- ``BINFILE``: Binfile to export
+- ``BINFILE``: Binfile to export (use ``-`` for stdin)
 
 Options:
 
 - ``--output, -o``: Output file path (required)
-- ``--group, -g``: Export only bins from specific group
+- ``--group, -g``: Export only bins from a specific group (optional)
 
 Example:
 
@@ -249,19 +263,22 @@ Example:
 
    bintools export contig2bin project.bins -o contig2bin.tsv
 
+   # Export only a specific group
+   bintools export contig2bin project.bins -o contig2bin.tsv --group metabat
+
 View Command
 ==============
 
-Decompress bin files, and filter bins based on query expressions.
+Filter bins from a binfile based on a query expression.
 
 .. code-block:: bash
 
-   bintools view BINFILE QUERY [OPTIONS]
+   bintools view BINFILE [QUERY] [OPTIONS]
 
 Arguments:
 
 - ``BINFILE``: Binfile to filter (use ``-`` for stdin)
-- ``QUERY``: Filter expression (use ``--list-fields`` to see available fields)
+- ``QUERY``: Filter expression (optional; if omitted, all bins are included)
 
 Options:
 
@@ -280,10 +297,13 @@ Examples:
    bintools view project.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
 
    # Filter by taxonomy
-   bintools view project.bins 'tax_phylum == "Bacteroidetes"' -o output.bins
+   bintools view project.bins 'phylum == "Bacteroidetes"' -o output.bins
 
    # Filter by group
    bintools view project.bins 'group == "metabat"' -o output.bins
+
+   # List available fields
+   bintools view --list-fields
 
 Available filter fields (see ``--list-fields`` for complete list):
 
@@ -296,7 +316,7 @@ Available filter fields (see ``--list-fields`` for complete list):
 - **contamination**: Contamination estimate (0.0-1.0)
 - **coverage**: Average coverage
 - **mimag**: MiMAG quality level (high, medium, low)
-- **tax_***: Taxonomy fields (kingdom, phylum, class, order, family, genus, species)
+- **kingdom, phylum, class, order, family, genus, species**: Taxonomy fields
 
 Merge Command
 =============
@@ -357,7 +377,7 @@ Rename bins using a template with field injection.
 
 Arguments:
 
-- ``BINFILE``: Binfile to rename bins in
+- ``BINFILE``: Binfile to rename bins in (use ``-`` for stdin)
 
 Options:
 
@@ -366,7 +386,7 @@ Options:
 - ``--compress, -z``: Compress output with zstd
 - ``--output, -o``: Output binfile path (default: stdout)
 
-Templates use field names in curly braces:
+Templates use field names in curly braces. Available fields can be listed with ``--list-fields``:
 
 .. code-block:: bash
 
@@ -382,22 +402,47 @@ Generate summary reports from binfiles.
 summarise bins
 --------------
 
-Create TSV summary of bins.
+Create a TSV summary of bins in a binfile.
 
 .. code-block:: bash
 
    bintools summarise bins BINFILE --output FILE [OPTIONS]
 
+Arguments:
+
+- ``BINFILE``: Binfile to summarise (use ``-`` for stdin)
+
 Options:
 
-- ``--include-statistics, -s``: Include computed statistics
-- ``--include-taxonomy, -t``: Include taxonomy information
+- ``--output, -o``: Output TSV file path (required)
+- ``--include-statistics, -s``: Include computed statistics (default: true)
+- ``--include-taxonomy, -t``: Include taxonomy information (default: true)
+
+Example:
+
+.. code-block:: bash
+
+   bintools summarise bins project.bins -o bin_summary.tsv
 
 summarise contigs
 ------------------
 
-Create TSV summary of contigs.
+Create a TSV summary of contigs in a binfile.
 
 .. code-block:: bash
 
    bintools summarise contigs BINFILE --output FILE
+
+Arguments:
+
+- ``BINFILE``: Binfile to summarise (use ``-`` for stdin)
+
+Options:
+
+- ``--output, -o``: Output TSV file path (required)
+
+Example:
+
+.. code-block:: bash
+
+   bintools summarise contigs project.bins -o contig_summary.tsv

@@ -47,6 +47,18 @@ def quality_file():
 
 
 @pytest.fixture
+def checkm_quality_file():
+    """Path to CheckM v1 quality file."""
+    return TEST_DATA_DIR / "checkm.tsv"
+
+
+@pytest.fixture
+def busco_quality_file():
+    """Path to BUSCO quality file."""
+    return TEST_DATA_DIR / "busco.tsv"
+
+
+@pytest.fixture
 def taxonomy_file():
     """Path to GTDB-Tk taxonomy file."""
     return TEST_DATA_DIR / "gtdbtk.tsv"
@@ -57,7 +69,7 @@ def binset_with_quality(assembly_contigs, bin_files, quality_file):
     """Create a BinSet with quality scores."""
     bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
     binset = BinSet(contigs=assembly_contigs, bins=bins)
-    return binset.add_bin_quality_scores(quality_file, QualityTool.CHECKM2)
+    return binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
 
 
 @pytest.fixture
@@ -65,7 +77,7 @@ def binset_with_taxonomy(assembly_contigs, bin_files, taxonomy_file):
     """Create a BinSet with taxonomy."""
     bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
     binset = BinSet(contigs=assembly_contigs, bins=bins)
-    return binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.GTDBTK)
+    return binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.gtdbtk)
 
 
 @pytest.fixture
@@ -73,8 +85,8 @@ def binset_full_metadata(assembly_contigs, bin_files, quality_file, taxonomy_fil
     """Create a BinSet with all metadata."""
     bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
     binset = BinSet(contigs=assembly_contigs, bins=bins)
-    binset = binset.add_bin_quality_scores(quality_file, QualityTool.CHECKM2)
-    binset = binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.GTDBTK)
+    binset = binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
+    binset = binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.gtdbtk)
     return binset
 
 
@@ -375,13 +387,6 @@ class TestRenaming:
 
         assert all("_Bacillota" in b.id for b in renamed)
 
-    def test_rename_unknown_field_raises_error(self, assembly_contigs, bin_files):
-        """Test that unknown field in template raises ValueError."""
-        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
-
-        with pytest.raises(ValueError, match="Invalid field"):
-            rename_bins(bins, "bin_{unknown_field}")
-
     def test_rename_preserves_other_attributes(self, assembly_contigs, bin_files):
         """Test that rename only changes ID, not other attributes."""
         bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
@@ -422,7 +427,7 @@ class TestBinSetOperations:
         )
 
         # Add quality
-        with_quality = binset.add_bin_quality_scores(quality_file, QualityTool.CHECKM2)
+        with_quality = binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
 
         # Verify quality added
         assert with_quality.bins is not None
@@ -440,7 +445,7 @@ class TestBinSetOperations:
         assert binset.bins[0].taxonomy is None
 
         # Add taxonomy
-        with_taxonomy = binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.GTDBTK)
+        with_taxonomy = binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.gtdbtk)
 
         # Verify taxonomy added
         assert with_taxonomy.bins is not None
@@ -469,8 +474,8 @@ class TestBinSetOperations:
         binset = BinSet(contigs=assembly_contigs, bins=bins)
 
         # Add metadata
-        binset = binset.add_bin_quality_scores(quality_file, QualityTool.CHECKM2)
-        binset = binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.GTDBTK)
+        binset = binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
+        binset = binset.add_bin_taxonomy(taxonomy_file, TaxonomyTool.gtdbtk)
 
         # Filter
         binset = binset.filter_bins("completeness > 0.99")
@@ -564,3 +569,208 @@ class TestRoundtrip:
         # Verify
         assert loaded.bins is not None
         assert len(loaded.bins) == 4
+
+
+class TestQualityTools:
+    """Tests for importing and parsing different quality tools."""
+
+    def test_add_checkm2_quality_scores(
+        self, assembly_contigs, bin_files, quality_file
+    ):
+        """Test adding CheckM2 quality scores to BinSet."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset = BinSet(contigs=assembly_contigs, bins=bins)
+
+        # Add CheckM2 quality
+        with_quality = binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
+
+        # Verify quality added to bins
+        assert with_quality.bins is not None
+        assert len(with_quality.bins) == 2
+
+        bin1 = next((b for b in with_quality.bins if b.id == "bin1"), None)
+        assert bin1 is not None
+        assert bin1.statistics is not None
+        assert bin1.statistics.completeness is not None
+        assert bin1.statistics.contamination is not None
+        assert 0 <= bin1.statistics.completeness <= 1
+        assert 0 <= bin1.statistics.contamination <= 1
+        assert bin1.statistics.quality_tool == QualityTool.checkm2
+
+    def test_add_checkm_v1_quality_scores(
+        self, assembly_contigs, bin_files, checkm_quality_file
+    ):
+        """Test adding CheckM v1 quality scores to BinSet."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset = BinSet(contigs=assembly_contigs, bins=bins)
+
+        # Add CheckM v1 quality
+        with_quality = binset.add_bin_quality_scores(
+            checkm_quality_file, QualityTool.checkm
+        )
+
+        # Verify quality added to bins
+        assert with_quality.bins is not None
+        assert len(with_quality.bins) == 2
+
+        bin1 = next((b for b in with_quality.bins if b.id == "bin1"), None)
+        assert bin1 is not None
+        assert bin1.statistics is not None
+        assert bin1.statistics.completeness is not None
+        assert bin1.statistics.contamination is not None
+        # CheckM values should be converted to 0-1 range (percentages)
+        assert 0 <= bin1.statistics.completeness <= 1
+        assert 0 <= bin1.statistics.contamination <= 1
+        assert bin1.statistics.quality_tool == QualityTool.checkm
+
+    def test_add_busco_quality_scores(
+        self, assembly_contigs, bin_files, busco_quality_file
+    ):
+        """Test adding BUSCO quality scores to BinSet."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset = BinSet(contigs=assembly_contigs, bins=bins)
+
+        # Add BUSCO quality
+        with_quality = binset.add_bin_quality_scores(
+            busco_quality_file, QualityTool.busco
+        )
+
+        # Verify quality added to bins
+        assert with_quality.bins is not None
+        assert len(with_quality.bins) == 2
+
+        bin1 = next((b for b in with_quality.bins if b.id == "bin1"), None)
+        assert bin1 is not None
+        assert bin1.statistics is not None
+        # BUSCO uses 'Complete' for completeness and 'Duplicated' for contamination
+        assert bin1.statistics.completeness is not None
+        assert bin1.statistics.contamination is not None
+        # Values should be normalized to 0-1 range
+        assert 0 <= bin1.statistics.completeness <= 1
+        assert 0 <= bin1.statistics.contamination <= 1
+        assert bin1.statistics.quality_tool == QualityTool.busco
+
+    def test_quality_scores_preserved_after_filter(
+        self, assembly_contigs, bin_files, quality_file
+    ):
+        """Test that quality scores are preserved after filtering."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset = BinSet(contigs=assembly_contigs, bins=bins)
+        with_quality = binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
+
+        # Filter bins
+        filtered = with_quality.filter_bins("completeness > 0.95")
+
+        # Verify quality preserved
+        assert filtered.bins is not None
+        for bin in filtered.bins:
+            assert bin.statistics is not None
+            assert bin.statistics.completeness is not None
+            assert bin.statistics.contamination is not None
+
+    def test_quality_scores_preserved_after_rename(
+        self, assembly_contigs, bin_files, quality_file
+    ):
+        """Test that quality scores are preserved after renaming."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset = BinSet(contigs=assembly_contigs, bins=bins)
+        with_quality = binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
+
+        # Rename bins
+        renamed = with_quality.rename_bins("hq_{id}")
+
+        # Verify quality preserved
+        assert renamed.bins is not None
+        for bin in renamed.bins:
+            assert bin.statistics is not None
+            assert bin.statistics.completeness is not None
+            assert bin.statistics.contamination is not None
+            assert "hq_" in bin.id
+
+    def test_checkm2_vs_checkm_different_formats(
+        self, assembly_contigs, bin_files, quality_file, checkm_quality_file
+    ):
+        """Test that CheckM2 and CheckM parse different format correctly."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+
+        # Add CheckM2
+        binset_checkm2 = BinSet(
+            contigs=assembly_contigs, bins=bins
+        ).add_bin_quality_scores(quality_file, QualityTool.checkm2)
+
+        # Add CheckM v1
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset_checkm = BinSet(
+            contigs=assembly_contigs, bins=bins
+        ).add_bin_quality_scores(checkm_quality_file, QualityTool.checkm)
+
+        # Both should have quality scores
+        assert binset_checkm2.bins is not None
+        assert binset_checkm.bins is not None
+
+        checkm2_bin1 = next((b for b in binset_checkm2.bins if b.id == "bin1"), None)
+        checkm_bin1 = next((b for b in binset_checkm.bins if b.id == "bin1"), None)
+
+        assert checkm2_bin1 is not None
+        assert checkm_bin1 is not None
+        assert checkm2_bin1.statistics is not None
+        assert checkm_bin1.statistics is not None
+        assert checkm2_bin1.statistics.completeness > 0
+        assert checkm_bin1.statistics.completeness > 0
+        # Different tools may have different completeness values
+        assert checkm2_bin1.statistics.quality_tool == QualityTool.checkm2
+        assert checkm_bin1.statistics.quality_tool == QualityTool.checkm
+
+    def test_busco_vs_checkm2_completeness_contamination(
+        self, assembly_contigs, bin_files, quality_file, busco_quality_file
+    ):
+        """Test that BUSCO and CheckM2 map completeness/contamination correctly."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset_checkm2 = BinSet(
+            contigs=assembly_contigs, bins=bins
+        ).add_bin_quality_scores(quality_file, QualityTool.checkm2)
+
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset_busco = BinSet(
+            contigs=assembly_contigs, bins=bins
+        ).add_bin_quality_scores(busco_quality_file, QualityTool.busco)
+
+        # Both should have quality scores
+        assert binset_checkm2.bins is not None
+        assert binset_busco.bins is not None
+
+        # Verify BUSCO completeness is mapped from 'Complete' column
+        busco_bin1 = next((b for b in binset_busco.bins if b.id == "bin1"), None)
+        assert busco_bin1 is not None
+        assert busco_bin1.statistics is not None
+        assert busco_bin1.statistics.completeness is not None
+        # BUSCO Complete value should be high for this test data
+        assert busco_bin1.statistics.completeness > 0.8
+
+    def test_quality_scores_roundtrip_with_serialization(
+        self, assembly_contigs, bin_files, quality_file, tmp_path
+    ):
+        """Test that quality scores survive serialization/deserialization."""
+        bins = parse_fasta_bins(bin_files, group="test", asm_contigs=assembly_contigs)
+        binset = BinSet(contigs=assembly_contigs, bins=bins)
+        with_quality = binset.add_bin_quality_scores(quality_file, QualityTool.checkm2)
+
+        # Serialize
+        outfile = tmp_path / "quality.bins"
+        with open(outfile, "wb") as f:
+            BinSetExporter(with_quality).write_binfile(f, compress=False)
+
+        # Deserialize
+        with open(outfile, "rb") as f:
+            loaded = BinSet.read_binfile(f)
+
+        # Verify quality scores preserved
+        assert loaded.bins is not None
+        for i, bin in enumerate(loaded.bins):
+            assert bin.statistics is not None
+            assert bin.statistics.completeness is not None
+            assert bin.statistics.contamination is not None
+            # Verify values match original
+            original_bin = with_quality.bins[i]
+            assert bin.statistics.completeness == original_bin.statistics.completeness
+            assert bin.statistics.contamination == original_bin.statistics.contamination

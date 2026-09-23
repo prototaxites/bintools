@@ -48,6 +48,18 @@ def quality_file():
 
 
 @pytest.fixture
+def checkm_quality_file():
+    """Path to CheckM v1 quality file."""
+    return TEST_DATA_DIR / "checkm.tsv"
+
+
+@pytest.fixture
+def busco_quality_file():
+    """Path to BUSCO quality file."""
+    return TEST_DATA_DIR / "busco.tsv"
+
+
+@pytest.fixture
 def taxonomy_file():
     """Path to test taxonomy file."""
     return TEST_DATA_DIR / "gtdbtk.tsv"
@@ -139,7 +151,7 @@ class TestImportCommands:
                 "quality",
                 str(test_binset_file),
                 "--tool",
-                "CHECKM2",
+                "checkm2",
                 "--quality",
                 str(quality_file),
                 "-o",
@@ -160,7 +172,7 @@ class TestImportCommands:
                 "taxonomy",
                 str(test_binset_file),
                 "--tool",
-                "GTDBTK",
+                "gtdbtk",
                 "--taxonomy",
                 str(taxonomy_file),
                 "-o",
@@ -184,6 +196,50 @@ class TestImportCommands:
             ],
         )
         assert result.exit_code == 0
+
+    def test_import_quality_checkm(
+        self, cli_runner, test_binset_file, checkm_quality_file, tmp_path
+    ):
+        """Test importing CheckM v1 quality scores."""
+        output_file = tmp_path / "output.bins"
+        result = cli_runner.invoke(
+            cli,
+            [
+                "import",
+                "quality",
+                str(test_binset_file),
+                "--tool",
+                "checkm",
+                "--quality",
+                str(checkm_quality_file),
+                "-o",
+                str(output_file),
+            ],
+        )
+        assert result.exit_code == 0
+        assert output_file.exists()
+
+    def test_import_quality_busco(
+        self, cli_runner, test_binset_file, busco_quality_file, tmp_path
+    ):
+        """Test importing BUSCO quality scores."""
+        output_file = tmp_path / "output.bins"
+        result = cli_runner.invoke(
+            cli,
+            [
+                "import",
+                "quality",
+                str(test_binset_file),
+                "--tool",
+                "busco",
+                "--quality",
+                str(busco_quality_file),
+                "-o",
+                str(output_file),
+            ],
+        )
+        assert result.exit_code == 0
+        assert output_file.exists()
 
 
 class TestFilterCommand:
@@ -257,7 +313,7 @@ class TestFilterCommand:
     def test_filter_list_fields(self, cli_runner, test_binset_file):
         """Test listing available filter fields."""
         result = cli_runner.invoke(
-            cli, ["filter", str(test_binset_file), "--list-fields"]
+            cli, ["view", str(test_binset_file), "--list-fields"]
         )
         assert result.exit_code == 0
         assert "id" in result.output
@@ -550,7 +606,7 @@ class TestPipingWorkflows:
         result1 = cli_runner.invoke(
             cli,
             [
-                "filter",
+                "view",
                 str(test_binset_file),
                 "completeness > 0.9",
                 "-o",
@@ -596,7 +652,7 @@ class TestPipingWorkflows:
         # Filter
         result1 = cli_runner.invoke(
             cli,
-            ["filter", str(test_binset_file), "length > 0", "-o", str(filter_output)],
+            ["view", str(test_binset_file), "length > 0", "-o", str(filter_output)],
         )
         assert result1.exit_code == 0
 

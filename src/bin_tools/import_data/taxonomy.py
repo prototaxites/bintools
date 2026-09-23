@@ -44,7 +44,7 @@ class TaxonomyReader:
             )
         elif taxonomy_source == "manual":
             taxonomy = self._read_taxonomy_file(
-                taxonomy_file, "File", "Classification", "taxonomy_source"
+                taxonomy_file, "File", "Classification", "manual"
             )
         else:
             logger.error(f"Unknown taxonomy source: {taxonomy_source}")

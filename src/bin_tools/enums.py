@@ -40,21 +40,21 @@ class MiMAG(StrEnum):
 class QualityTool(StrEnum):
     """Supported bin QC tools"""
 
-    CHECKM = "checkm"
-    CHECKM2 = "checkm2"
-    BUSCO = "busco"
-    MANUAL = "manual"
+    checkm = "checkm"
+    checkm2 = "checkm2"
+    busco = "busco"
+    manual = "manual"
 
 
 class TaxonomyTool(StrEnum):
     """Supported taxonomy tools."""
 
-    GTDBTK = "gtdbtk"
-    GTDBTK_NCBI = "gtdbtk_ncbi"
-    MANUAL = "manual"
+    gtdbtk = "gtdbtk"
+    gtdbtk_ncbi = "gtdbtk_ncbi"
+    manual = "manual"
 
 
 class CoverageTool(StrEnum):
     """Supported coverage tools."""
 
-    METABAT = "metabat"
+    metabat = "metabat"

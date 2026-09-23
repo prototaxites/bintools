@@ -1,0 +1,3 @@
+Bin Id	Marker lineage	# genomes	# markers	# marker sets	0	1	2	3	4	5+	completeness	contamination	Strain heterogeneity
+bin1	root (UID1)	5656	56	24	56	0	0	0	0	0	90.00	3.00	0.00
+bin2	root (UID1)	5656	56	24	56	0	0	0	0	0	70.00	1.00	0.00

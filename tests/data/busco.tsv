@@ -1,0 +1,3 @@
+Input_file	Dataset	Complete	Single	Duplicated	Fragmented	Missing	n_markers	Internal stop codon percent	Scores_archaea_odb12.2	Scores_bacteria_odb12.2	Scores_eukaryota_odb12.2	Scaffold N50	Contigs N50	Percent gaps	Number of scaffolds
+bin1.fa	pseudomonadota_odb12.2	90.1	79.9	10.2	0.2	9.7	2708	14.3	Not run	C:95.2%[S:80.8%,D:14.4%],F:0.8%,M:4.0%,n:125,E:20.2%	Not run	4067765	4067765	0.000%	3279
+bin2.fa	pseudomonadota_odb12.2	93.4	80.2	13.2	0.3	6.3	2708	13.7	Not run	C:94.4%[S:80.8%,D:13.6%],F:0.8%,M:4.8%,n:125,E:16.9%	Not run	4820872	4820872	0.000%	2595
