@@ -21,7 +21,7 @@ class BinStatistics(BaseModel):
     n_circular: int | None = Field(
         None, ge=0, description="Number of circular contigs in the bin"
     )
-    n50: int | None = Field(None, gt=0, description="N50 of the bin")
+    n50: int | None = Field(None, ge=0, description="N50 of the bin")
     coverage: float | None = Field(None, gt=0, description="Coverage of the bin")
     completeness: float | None = Field(
         None, gt=0, lt=1, description="Completeness of the bin"
@@ -62,11 +62,11 @@ class BinStatistics(BaseModel):
                     and self.has_16s
                     and self.has_23s
                     and (
-                        (self.completeness >= 50 and self.n_contigs == self.n_circular)
-                        or self.completeness >= 90
+                        (self.completeness >= 0.5 and self.n_contigs == self.n_circular)
+                        or self.completeness >= 0.9
                     )
                 ),
-                MiMAG.MEDIUM: self.completeness >= 50 and self.contamination <= 10,
+                MiMAG.MEDIUM: self.completeness >= 0.5 and self.contamination <= 0.1,
                 MiMAG.LOW: True,
             }
             self.mimag = next(quality for quality, met in conditions.items() if met)
@@ -189,6 +189,7 @@ class Bin(BaseModel):
         statistics.longest = CalculateBinStatistics.bin_longest_contig(bin_contigs)
         statistics.n_contigs = len(bin_contigs)
         statistics.n_circular = CalculateBinStatistics.bin_n_circular(bin_contigs)
+        statistics.n50 = CalculateBinStatistics.bin_n50(bin_contigs)
         statistics.coverage = CalculateBinStatistics.bin_coverage(bin_contigs)
         statistics.n_unique_trnas = CalculateBinStatistics.bin_n_unique_trnas(
             bin_contigs

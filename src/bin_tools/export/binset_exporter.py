@@ -101,7 +101,7 @@ class BinSetExporter:
         self,
         include_statistics: bool = True,
         include_taxonomy: bool = True,
-    ) -> list[dict[str, str | int | float]]:
+    ) -> list[dict[str, str | int | float | None]]:
         """
         Flatten the bins in the BinSet into a list of dictionaries.
 
@@ -120,12 +120,12 @@ class BinSetExporter:
 
             if include_statistics:
                 if bin.statistics is not None:
-                    bin_dict.update(bin.statistics.model_dump())
+                    bin_dict.update(bin.statistics.model_dump(exclude_none=False))
                 else:
                     logger.warning(f"Bin {bin.id} has no statistics.")
             if include_taxonomy:
                 if bin.taxonomy is not None:
-                    bin_dict.update(bin.taxonomy.model_dump())
+                    bin_dict.update(bin.taxonomy.model_dump(exclude_none=False))
                 else:
                     logger.warning(f"Bin {bin.id} has no taxonomy.")
 
@@ -135,7 +135,7 @@ class BinSetExporter:
 
     def summarise_contigs(
         self,
-    ) -> list[dict[str, str | int | float]]:
+    ) -> list[dict[str, str | int | float | None]]:
         """
         Summarise the contigs in the binset.
 
@@ -144,7 +144,8 @@ class BinSetExporter:
         """
         out_list = []
         for contig in self.binset.contigs.values():
-            contig_dict = contig.model_dump()
+            contig_dict = contig.model_dump(exclude={"annotations", "sequence"})
+            contig_dict.update({"trnas": ",".join(contig_dict["trnas"])})
             out_list.append(contig_dict)
         return out_list
 
@@ -161,7 +162,9 @@ class BinSetExporter:
             return
 
         with open(output_path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=list(summarised[0].keys()))
+            writer = csv.DictWriter(
+                f, fieldnames=list(summarised[0].keys()), delimiter="\t"
+            )
             writer.writeheader()
             writer.writerows(summarised)
 
@@ -194,6 +197,8 @@ class BinSetExporter:
         seen = set()
         for row in summarised:
             for key in row:
+                if row[key] is None:
+                    row[key] = ""
                 if key not in seen:
                     all_fieldnames.append(key)
                     seen.add(key)
