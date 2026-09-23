@@ -175,8 +175,8 @@ Options:
 Notes:
 
 - For GTDB-Tk: use the ar122_summary.tsv or bac120_summary.tsv files
-- For GTDB-Tk NCBI: use output from gtdb_to_ncbi_majority_vote.py script
-- For manual TSV: must have fields ``File`` and ``Classification`` (lineage string format: k__.*;p__.*...)
+- For GTDB-Tk NCBI: use output from ``gtdb_to_ncbi_majority_vote.py`` script
+- For manual TSV: must have fields ``File`` and ``Classification`` (lineage string format: ``k__.*;p__.*...``)
 
 Example:
 
