@@ -37,10 +37,10 @@ class Contig(BaseModel):
         if self.annotations is None:
             return []
         return [
-            product
+            isotype
             for a in self.annotations
             if a.feature == "tRNA"
-            and (product := a.attributes.get("product")) is not None
+            and (isotype := a.attributes.get("isotype")) is not None
         ]
 
     def _has_any_rrna(self, names: list[str]) -> bool:
