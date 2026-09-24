@@ -148,4 +148,4 @@ To compress an existing binfile:
 
 .. code-block:: bash
 
-   bintools view input.bins -z -o input.bins.zstd
+   metabintools view input.bins -z -o input.bins.zstd

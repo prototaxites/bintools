@@ -8,15 +8,15 @@ from pathlib import Path
 import click
 import pytest
 
-from bin_tools.dataclasses.bin import Bin
-from bin_tools.dataclasses.binset import BinSet
-from bin_tools.enums import Assembler, QualityTool, TaxonomyTool
-from bin_tools.export.binset_exporter import BinSetExporter
-from bin_tools.import_data.assembly import parse_assembly_fasta
-from bin_tools.import_data.binset import parse_fasta_bins
-from bin_tools.operations.merge import merge_binsets
-from bin_tools.operations.rename import rename_bins
-from bin_tools.query.query_parser import get_available_fields
+from metabintools.dataclasses.bin import Bin
+from metabintools.dataclasses.binset import BinSet
+from metabintools.enums import Assembler, QualityTool, TaxonomyTool
+from metabintools.export.binset_exporter import BinSetExporter
+from metabintools.import_data.assembly import parse_assembly_fasta
+from metabintools.import_data.binset import parse_fasta_bins
+from metabintools.operations.merge import merge_binsets
+from metabintools.operations.rename import rename_bins
+from metabintools.query.query_parser import get_available_fields
 
 TEST_DATA_DIR = Path(__file__).parent / "data"
 

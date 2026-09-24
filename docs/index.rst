@@ -1,9 +1,9 @@
-bintools Documentation
+metabintools Documentation
 ======================
 
 A toolkit for managing and manipulating metagenomic binning outputs.
 
-**bintools** consolidates metagenomic bin data, including sequences, annotations, quality metrics, and taxonomy, into a single unified file format for streamlined analysis workflows.
+**metabintools** consolidates metagenomic bin data, including sequences, annotations, quality metrics, and taxonomy, into a single unified file format for streamlined analysis workflows.
 
 .. toctree::
    :maxdepth: 2
@@ -32,7 +32,7 @@ Key Features
 Quick Links
 ===========
 
-- `GitHub Repository <https://github.com/prototaxites/bintools>`_
+- `GitHub Repository <https://github.com/prototaxites/metabintools>`_
 - `PyPI Package <https://pypi.org/project/bin-tools>`_
 
 Indices and tables

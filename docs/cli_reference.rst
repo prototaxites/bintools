@@ -6,6 +6,8 @@ This page documents the complete command-line interface for metabintools.
 All commands support reading from stdin (``-``) and writing to stdout (``-``), enabling Unix pipes.
 Commands support compression with the ``-z`` flag, and the format is auto-detected on input.
 
+Note that the standard binary is called ``metabintools``, but the binary ``bintools`` is provided as an alias.
+
 Import Commands
 ===============
 
@@ -18,7 +20,7 @@ Import a metagenomic assembly to initialize a binfile.
 
 .. code-block:: bash
 
-   bintools import asm ASSEMBLY [OPTIONS]
+   metabintools import asm ASSEMBLY [OPTIONS]
 
 Arguments:
 
@@ -40,7 +42,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools import asm assembly.fasta --assembler metamdbg -o project.bins
+   metabintools import asm assembly.fasta --assembler metamdbg -o project.bins
 
 import binset
 -------------
@@ -49,7 +51,7 @@ Add bins from binning tool output.
 
 .. code-block:: bash
 
-   bintools import binset BINFILE FASTA [FASTA ...] --group NAME [OPTIONS]
+   metabintools import binset BINFILE FASTA [FASTA ...] --group NAME [OPTIONS]
 
 Arguments:
 
@@ -67,7 +69,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools import binset project.bins bins/ --group "metabat" -o project.bins
+   metabintools import binset project.bins bins/ --group "metabat" -o project.bins
 
 import annotation
 -----------------
@@ -76,7 +78,7 @@ Add GFF3 annotations to contigs.
 
 .. code-block:: bash
 
-   bintools import annotation BINFILE GFF [OPTIONS]
+   metabintools import annotation BINFILE GFF [OPTIONS]
 
 Arguments:
 
@@ -93,7 +95,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools import annotation project.bins annotations.gff -o project.bins
+   metabintools import annotation project.bins annotations.gff -o project.bins
 
 import coverage
 ---------------
@@ -102,7 +104,7 @@ Add coverage data to contigs.
 
 .. code-block:: bash
 
-   bintools import coverage BINFILE COVERAGE [OPTIONS]
+   metabintools import coverage BINFILE COVERAGE [OPTIONS]
 
 Arguments:
 
@@ -119,7 +121,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools import coverage project.bins coverage.tsv --tool metabat -o project.bins
+   metabintools import coverage project.bins coverage.tsv --tool metabat -o project.bins
 
 import quality
 ---------------
@@ -128,7 +130,7 @@ Add quality scores from binning assessment tools.
 
 .. code-block:: bash
 
-   bintools import quality BINFILE --quality FILE --tool TOOL [OPTIONS]
+   metabintools import quality BINFILE --quality FILE --tool TOOL [OPTIONS]
 
 Arguments:
 
@@ -150,7 +152,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools import quality project.bins --quality checkm2.tsv --tool checkm2 -o project.bins
+   metabintools import quality project.bins --quality checkm2.tsv --tool checkm2 -o project.bins
 
 import taxonomy
 ----------------
@@ -159,7 +161,7 @@ Add taxonomic classifications to bins.
 
 .. code-block:: bash
 
-   bintools import taxonomy BINFILE --taxonomy FILE --tool TOOL [OPTIONS]
+   metabintools import taxonomy BINFILE --taxonomy FILE --tool TOOL [OPTIONS]
 
 Arguments:
 
@@ -182,7 +184,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools import taxonomy project.bins --taxonomy gtdbtk.tsv --tool gtdbtk -o project.bins
+   metabintools import taxonomy project.bins --taxonomy gtdbtk.tsv --tool gtdbtk -o project.bins
 
 Export Commands
 ===============
@@ -196,7 +198,7 @@ Export bins to individual FASTA files.
 
 .. code-block:: bash
 
-   bintools export fasta BINFILE --outdir DIR [OPTIONS]
+   metabintools export fasta BINFILE --outdir DIR [OPTIONS]
 
 Arguments:
 
@@ -213,7 +215,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools export fasta project.bins -o bins/ --group-fasta
+   metabintools export fasta project.bins -o bins/ --group-fasta
 
 export gff
 ----------
@@ -222,7 +224,7 @@ Export bin annotations to GFF3 files.
 
 .. code-block:: bash
 
-   bintools export gff BINFILE --outdir DIR [OPTIONS]
+   metabintools export gff BINFILE --outdir DIR [OPTIONS]
 
 Arguments:
 
@@ -237,7 +239,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools export gff project.bins -o annotations/
+   metabintools export gff project.bins -o annotations/
 
 export contig2bin
 ------------------
@@ -246,7 +248,7 @@ Export contig-to-bin mapping in DAS_Tool format.
 
 .. code-block:: bash
 
-   bintools export contig2bin BINFILE --output FILE [OPTIONS]
+   metabintools export contig2bin BINFILE --output FILE [OPTIONS]
 
 Arguments:
 
@@ -261,10 +263,10 @@ Example:
 
 .. code-block:: bash
 
-   bintools export contig2bin project.bins -o contig2bin.tsv
+   metabintools export contig2bin project.bins -o contig2bin.tsv
 
    # Export only a specific group
-   bintools export contig2bin project.bins -o contig2bin.tsv --group metabat
+   metabintools export contig2bin project.bins -o contig2bin.tsv --group metabat
 
 View Command
 ==============
@@ -273,7 +275,7 @@ Filter bins from a binfile based on a query expression.
 
 .. code-block:: bash
 
-   bintools view BINFILE [QUERY] [OPTIONS]
+   metabintools view BINFILE [QUERY] [OPTIONS]
 
 Arguments:
 
@@ -291,19 +293,19 @@ Examples:
 .. code-block:: bash
 
    # Filter by quality
-   bintools view project.bins 'completeness >= 0.9' -o hq.bins
+   metabintools view project.bins 'completeness >= 0.9' -o hq.bins
 
    # Filter by multiple criteria
-   bintools view project.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
+   metabintools view project.bins 'completeness >= 0.9 and contamination <= 0.05' -o hq.bins
 
    # Filter by taxonomy
-   bintools view project.bins 'phylum == "Bacteroidetes"' -o output.bins
+   metabintools view project.bins 'phylum == "Bacteroidetes"' -o output.bins
 
    # Filter by group
-   bintools view project.bins 'group == "metabat"' -o output.bins
+   metabintools view project.bins 'group == "metabat"' -o output.bins
 
    # List available fields
-   bintools view --list-fields
+   metabintools view --list-fields
 
 Available filter fields (see ``--list-fields`` for complete list):
 
@@ -325,7 +327,7 @@ Combine multiple binfiles into one.
 
 .. code-block:: bash
 
-   bintools merge BINFILES [BINFILES ...] [OPTIONS]
+   metabintools merge BINFILES [BINFILES ...] [OPTIONS]
 
 Arguments:
 
@@ -340,7 +342,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools merge set1.bins set2.bins set3.bins -o merged.bins
+   metabintools merge set1.bins set2.bins set3.bins -o merged.bins
 
 Trim Command
 ============
@@ -349,7 +351,7 @@ Remove contigs not referenced by any bin.
 
 .. code-block:: bash
 
-   bintools trim BINFILE [OPTIONS]
+   metabintools trim BINFILE [OPTIONS]
 
 Arguments:
 
@@ -364,7 +366,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools trim project.bins -o trimmed.bins
+   metabintools trim project.bins -o trimmed.bins
 
 Rename Command
 ==============
@@ -373,7 +375,7 @@ Rename bins using a template with field injection.
 
 .. code-block:: bash
 
-   bintools rename BINFILE --bin-name TEMPLATE [OPTIONS]
+   metabintools rename BINFILE --bin-name TEMPLATE [OPTIONS]
 
 Arguments:
 
@@ -390,7 +392,7 @@ Templates use field names in curly braces. Available fields can be listed with `
 
 .. code-block:: bash
 
-   bintools rename project.bins -n "bin_{tax_phylum}_{completeness}" -o renamed.bins
+   metabintools rename project.bins -n "bin_{tax_phylum}_{completeness}" -o renamed.bins
 
 If multiple bins end up with the same name, numeric suffixes are added (_1, _2, etc.).
 
@@ -406,7 +408,7 @@ Create a TSV summary of bins in a binfile.
 
 .. code-block:: bash
 
-   bintools summarise bins BINFILE --output FILE [OPTIONS]
+   metabintools summarise bins BINFILE --output FILE [OPTIONS]
 
 Arguments:
 
@@ -422,7 +424,7 @@ Example:
 
 .. code-block:: bash
 
-   bintools summarise bins project.bins -o bin_summary.tsv
+   metabintools summarise bins project.bins -o bin_summary.tsv
 
 summarise contigs
 ------------------
@@ -431,7 +433,7 @@ Create a TSV summary of contigs in a binfile.
 
 .. code-block:: bash
 
-   bintools summarise contigs BINFILE --output FILE
+   metabintools summarise contigs BINFILE --output FILE
 
 Arguments:
 
@@ -445,4 +447,27 @@ Example:
 
 .. code-block:: bash
 
-   bintools summarise contigs project.bins -o contig_summary.tsv
+   metabintools summarise contigs project.bins -o contig_summary.tsv
+
+summarise groups
+--------------
+
+Create an aggregated TSV summary of bin groups, showing counts of bins at each MiMAG level
+
+.. code-block:: bash
+
+   metabintools summarise groups BINFILE --output FILE [OPTIONS]
+
+Arguments:
+
+- ``BINFILE``: Binfile to summarise (use ``-`` for stdin)
+
+Options:
+
+- ``--output, -o``: Output TSV file path (required)
+
+Example:
+
+.. code-block:: bash
+
+   metabintools summarise groups project.bins -o bin_summary.tsv

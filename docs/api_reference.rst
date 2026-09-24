@@ -9,7 +9,7 @@ Core Data Structures
 BinSet
 ------
 
-.. autoclass:: bin_tools.dataclasses.binset.BinSet
+.. autoclass:: metabintools.dataclasses.binset.BinSet
    :members:
    :undoc-members:
    :show-inheritance:
@@ -19,7 +19,7 @@ The main class representing a collection of contigs and bins.
 Bin
 ---
 
-.. autoclass:: bin_tools.dataclasses.bin.Bin
+.. autoclass:: metabintools.dataclasses.bin.Bin
    :members:
    :undoc-members:
    :show-inheritance:
@@ -29,7 +29,7 @@ Represents a single metagenomic bin with statistics and taxonomy.
 BinStatistics
 -------------
 
-.. autoclass:: bin_tools.dataclasses.bin.BinStatistics
+.. autoclass:: metabintools.dataclasses.bin.BinStatistics
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,7 +39,7 @@ Statistics computed for a bin.
 BinTaxonomy
 -----------
 
-.. autoclass:: bin_tools.dataclasses.bin.BinTaxonomy
+.. autoclass:: metabintools.dataclasses.bin.BinTaxonomy
    :members:
    :undoc-members:
    :show-inheritance:
@@ -49,7 +49,7 @@ Taxonomy information for a bin.
 Contig
 ------
 
-.. autoclass:: bin_tools.dataclasses.contig.Contig
+.. autoclass:: metabintools.dataclasses.contig.Contig
    :members:
    :undoc-members:
    :show-inheritance:
@@ -59,7 +59,7 @@ Represents a single contig sequence.
 Annotation
 ----------
 
-.. autoclass:: bin_tools.dataclasses.annotation.Annotation
+.. autoclass:: metabintools.dataclasses.annotation.Annotation
    :members:
    :undoc-members:
    :show-inheritance:
@@ -72,56 +72,56 @@ Import Functions
 Assembly Parsing
 ----------------
 
-.. automodule:: bin_tools.import_data.assembly
+.. automodule:: metabintools.import_data.assembly
    :members:
    :undoc-members:
 
 Bin Parsing
 -----------
 
-.. automodule:: bin_tools.import_data.binset
+.. automodule:: metabintools.import_data.binset
    :members:
    :undoc-members:
 
 Annotation Processing
 ---------------------
 
-.. automodule:: bin_tools.import_data.annotation
+.. automodule:: metabintools.import_data.annotation
    :members:
    :undoc-members:
 
 Coverage Data
 -------------
 
-.. automodule:: bin_tools.import_data.coverage
+.. automodule:: metabintools.import_data.coverage
    :members:
    :undoc-members:
 
 Quality Scores
 --------------
 
-.. automodule:: bin_tools.import_data.quality
+.. automodule:: metabintools.import_data.quality
    :members:
    :undoc-members:
 
 Taxonomy
 --------
 
-.. automodule:: bin_tools.import_data.taxonomy
+.. automodule:: metabintools.import_data.taxonomy
    :members:
    :undoc-members:
 
 Export Functions
 ================
 
-.. autoclass:: bin_tools.export.binset_exporter.BinSetExporter
+.. autoclass:: metabintools.export.binset_exporter.BinSetExporter
    :members:
    :undoc-members:
 
 Query and Filtering
 ===================
 
-.. automodule:: bin_tools.query.query_parser
+.. automodule:: metabintools.query.query_parser
    :members:
    :undoc-members:
 
@@ -131,21 +131,21 @@ Operations
 Merging
 -------
 
-.. automodule:: bin_tools.operations.merge
+.. automodule:: metabintools.operations.merge
    :members:
    :undoc-members:
 
 Renaming
 --------
 
-.. automodule:: bin_tools.operations.rename
+.. automodule:: metabintools.operations.rename
    :members:
    :undoc-members:
 
 Enumerations
 ============
 
-.. automodule:: bin_tools.enums
+.. automodule:: metabintools.enums
    :members:
    :undoc-members:
 
@@ -155,14 +155,14 @@ Utilities
 Bin Statistics Calculation
 ---------------------------
 
-.. automodule:: bin_tools.binstatistics
+.. automodule:: metabintools.binstatistics
    :members:
    :undoc-members:
 
 File Utilities
 --------------
 
-.. automodule:: bin_tools.bin_utils
+.. automodule:: metabintools.bin_utils
    :members:
    :undoc-members:
 
@@ -177,10 +177,10 @@ Here's an example of using metabintools as a Python library:
 .. code-block:: python
 
    from pathlib import Path
-   from bin_tools.dataclasses.binset import BinSet
-   from bin_tools.import_data.assembly import parse_assembly_fasta
-   from bin_tools.import_data.binset import parse_fasta_bins
-   from bin_tools.enums import Assembler
+   from metabintools.dataclasses.binset import BinSet
+   from metabintools.import_data.assembly import parse_assembly_fasta
+   from metabintools.import_data.binset import parse_fasta_bins
+   from metabintools.enums import Assembler
 
    # Load assembly
    assembly_path = Path("metagenome.fasta")
@@ -197,7 +197,7 @@ Here's an example of using metabintools as a Python library:
    filtered = binset.filter_bins("completeness >= 0.9")
 
    # Export to FASTA
-   from bin_tools.export.binset_exporter import BinSetExporter
+   from metabintools.export.binset_exporter import BinSetExporter
    exporter = BinSetExporter(filtered)
    exporter.export_fasta(Path("output/"), compress=False)
 
@@ -206,8 +206,8 @@ Reading and Writing BinFiles
 
 .. code-block:: python
 
-   from bin_tools.dataclasses.binset import BinSet
-   from bin_tools.export.binset_exporter import BinSetExporter
+   from metabintools.dataclasses.binset import BinSet
+   from metabintools.export.binset_exporter import BinSetExporter
 
    # Read a binfile
    with open("project.bins", "rb") as f:

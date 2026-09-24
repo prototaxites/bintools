@@ -1,4 +1,4 @@
-"""Core functionality tests for bintools.
+"""Core functionality tests for metabintools.
 
 Tests assembly parsing, bin loading, and the core BinSet operations.
 """
@@ -8,13 +8,13 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from bin_tools.dataclasses.binset import BinSet
-from bin_tools.dataclasses.contig import Contig
-from bin_tools.enums import Assembler
-from bin_tools.export.binset_exporter import BinSetExporter
-from bin_tools.import_data.annotation import ContigAnnotator
-from bin_tools.import_data.assembly import parse_assembly_fasta
-from bin_tools.import_data.binset import parse_fasta_bins
+from metabintools.dataclasses.binset import BinSet
+from metabintools.dataclasses.contig import Contig
+from metabintools.enums import Assembler
+from metabintools.export.binset_exporter import BinSetExporter
+from metabintools.import_data.annotation import ContigAnnotator
+from metabintools.import_data.assembly import parse_assembly_fasta
+from metabintools.import_data.binset import parse_fasta_bins
 
 TEST_DATA_DIR = Path(__file__).parent / "data"
 
@@ -187,7 +187,7 @@ class TestBinSet:
         self, assembly_contigs, tmp_path
     ):
         """Test that BinSet validation rejects bins with missing contigs."""
-        from bin_tools.dataclasses.bin import Bin
+        from metabintools.dataclasses.bin import Bin
 
         invalid_bin = Bin(
             id="invalid",

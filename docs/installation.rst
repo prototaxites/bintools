@@ -17,19 +17,19 @@ Clone the repository and install in development mode:
 
 .. code-block:: bash
 
-   git clone https://github.com/yourusername/bintools.git
-   cd bintools
+   git clone https://github.com/yourusername/metabintools.git
+   cd metabintools
    pip install -e .
 
 Development Installation
 --------------------------
 
-If you want to contribute to bintools, install with development dependencies:
+If you want to contribute to metabintools, install with development dependencies:
 
 .. code-block:: bash
 
-   git clone https://github.com/yourusername/bintools.git
-   cd bintools
+   git clone https://github.com/yourusername/metabintools.git
+   cd metabintools
    uv sync --all-extras --dev
 
 Requirements
@@ -51,5 +51,5 @@ Verify the installation was successful:
 
 .. code-block:: bash
 
-   bintools --version
-   bintools --help
+   metabintools --version
+   metabintools --help

@@ -14,12 +14,13 @@ dependencies = [
     "loguru>=0.7.3",
     "pydantic>=2.13.5",
     "pyfastx>=2.3.1",
+    "requests>=2.34.2",
     "zstandard>=0.25.0",
 ]
 
 [project.scripts]
-metabintools = "bin_tools.cli.cli:cli"
-bintools = "bin_tools.cli.cli:cli"
+bintools = "metabintools.cli.cli:cli"
+metabintools = "metabintools.cli.cli:cli"
 
 [build-system]
 requires = ["uv_build>=0.12.14,<0.13.0"]

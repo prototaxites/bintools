@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from click.testing import CliRunner
 
-from bin_tools.cli.cli import cli
+from metabintools.cli.cli import cli
 
 TEST_DATA_DIR = Path(__file__).parent / "data"
 
@@ -72,7 +72,7 @@ def gff_file():
 
 
 class TestImportCommands:
-    """Tests for bintools import commands."""
+    """Tests for metabintools import commands."""
 
     def test_import_asm_basic(self, cli_runner, assembly_file, tmp_path):
         """Test importing an assembly file."""
@@ -243,7 +243,7 @@ class TestImportCommands:
 
 
 class TestFilterCommand:
-    """Tests for bintools filter command."""
+    """Tests for metabintools filter command."""
 
     def test_filter_basic(self, cli_runner, test_binset_file, tmp_path):
         """Test basic filtering."""
@@ -338,7 +338,7 @@ class TestFilterCommand:
 
 
 class TestMergeCommand:
-    """Tests for bintools merge command."""
+    """Tests for metabintools merge command."""
 
     def test_merge_basic(self, cli_runner, test_binset_file, tmp_path):
         """Test merging binsets."""
@@ -384,7 +384,7 @@ class TestMergeCommand:
 
 
 class TestTrimCommand:
-    """Tests for bintools trim command."""
+    """Tests for metabintools trim command."""
 
     def test_trim_basic(self, cli_runner, test_binset_file, tmp_path):
         """Test trimming unused contigs."""
@@ -424,7 +424,7 @@ class TestTrimCommand:
 
 
 class TestRenameCommand:
-    """Tests for bintools rename command."""
+    """Tests for metabintools rename command."""
 
     def test_rename_basic(self, cli_runner, test_binset_file, tmp_path):
         """Test renaming bins."""
@@ -488,7 +488,7 @@ class TestRenameCommand:
 
 
 class TestExportCommands:
-    """Tests for bintools export commands."""
+    """Tests for metabintools export commands."""
 
     def test_export_fasta(self, cli_runner, test_binset_file, tmp_path):
         """Test exporting bins to FASTA."""
@@ -550,7 +550,7 @@ class TestExportCommands:
 
 
 class TestSummariseCommands:
-    """Tests for bintools summarise commands."""
+    """Tests for metabintools summarise commands."""
 
     def test_summarise_bins(self, cli_runner, test_binset_file, tmp_path):
         """Test summarizing bins."""
