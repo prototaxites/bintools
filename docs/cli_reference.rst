@@ -450,7 +450,7 @@ Example:
    metabintools summarise contigs project.bins -o contig_summary.tsv
 
 summarise groups
---------------
+----------------
 
 Create an aggregated TSV summary of bin groups, showing counts of bins at each MiMAG level
 

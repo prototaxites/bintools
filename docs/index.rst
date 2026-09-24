@@ -1,5 +1,5 @@
 metabintools Documentation
-======================
+==========================
 
 A toolkit for managing and manipulating metagenomic binning outputs.
 
