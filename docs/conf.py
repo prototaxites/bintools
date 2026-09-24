@@ -11,7 +11,7 @@ sys.path.insert(0, str(project_root / "src"))
 project = "metabintools"
 copyright = "2026, Genome Research Ltd"
 author = "Jim Downie"
-release = "0.2.0"
+release = "0.2.1"
 
 extensions = [
     "sphinx.ext.autodoc",
