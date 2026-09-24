@@ -4,7 +4,8 @@ from pathlib import Path
 from loguru import logger
 
 from metabintools.bin_utils import get_basename
-from metabintools.dataclasses.bin import Bin, BinStatistics
+from metabintools.dataclasses.bin import Bin
+from metabintools.dataclasses.bin_statistics import BinStatistics
 from metabintools.enums import QualityTool
 
 

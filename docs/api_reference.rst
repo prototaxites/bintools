@@ -29,7 +29,7 @@ Represents a single metagenomic bin with statistics and taxonomy.
 BinStatistics
 -------------
 
-.. autoclass:: metabintools.dataclasses.bin.BinStatistics
+.. autoclass:: metabintools.dataclasses.bin_statistics.BinStatistics
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,7 +39,7 @@ Statistics computed for a bin.
 BinTaxonomy
 -----------
 
-.. autoclass:: metabintools.dataclasses.bin.BinTaxonomy
+.. autoclass:: metabintools.dataclasses.bin_taxonomy.BinTaxonomy
    :members:
    :undoc-members:
    :show-inheritance:

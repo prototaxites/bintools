@@ -14,7 +14,9 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from metabintools.dataclasses.bin import Bin, BinStatistics, BinTaxonomy
+from metabintools.dataclasses.bin import Bin
+from metabintools.dataclasses.bin_statistics import BinStatistics
+from metabintools.dataclasses.bin_taxonomy import BinTaxonomy
 
 
 @dataclass
