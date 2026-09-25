@@ -1,6 +1,5 @@
 # Configuration file for the Sphinx documentation builder.
 
-import os
 import sys
 from pathlib import Path
 
@@ -11,7 +10,7 @@ sys.path.insert(0, str(project_root / "src"))
 project = "metabintools"
 copyright = "2026, Genome Research Ltd"
 author = "Jim Downie"
-release = "0.2.2"
+release = "0.2.3"
 
 extensions = [
     "sphinx.ext.autodoc",

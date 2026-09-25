@@ -1,6 +1,5 @@
 import csv
 from pathlib import Path
-from turtle import st
 
 from loguru import logger
 
