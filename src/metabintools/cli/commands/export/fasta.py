@@ -29,6 +29,7 @@ from metabintools.export.binset_exporter import BinSetExporter
     "-h",
     is_flag=True,
     help="(optional) Preserve headers in the output FASTA file.",
+    default=False,
 )
 @click.option(
     "--group-fasta",

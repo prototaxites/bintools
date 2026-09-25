@@ -57,7 +57,7 @@ class BinSetExporter:
                     export_path.mkdir(parents=True, exist_ok=True)
 
             bin.export_fasta(
-                self.binset.contigs, export_path, compress, preserve_headers
+                self.binset.contigs, export_path, preserve_headers, compress
             )
 
     def export_gff(self, outdir: Path, group_gff: bool):
